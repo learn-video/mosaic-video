@@ -8,4 +8,4 @@ ffmpeg \
         [a0][a1]xstack=inputs=2:layout=0_0|w0_0[out] \
         " \
     -map "[out]" \
-    -c:v libx264 -t '30' -f matroska -  | ffplay -autoexit -left 30 -top 30 -
+    -c:v libx264 -t '30' -f matroska - | ffplay -autoexit -left 30 -top 30 -
