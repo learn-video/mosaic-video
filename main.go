@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -37,8 +38,8 @@ func buildCommand(urls []string) *exec.Cmd {
 	filterComplex += fmt.Sprintf("%sxstack=inputs=%d:layout=%s[out]", strings.Join(inputLabels, ""), len(urls), xstackLayout)
 
 	args = append(args,
-		"-filter_complex", fmt.Sprintf("%q", filterComplex),
-		"-map", fmt.Sprintf("%q", "[out]"),
+		"-filter_complex", filterComplex,
+		"-map", "[out]",
 		"-c:v", "libx264",
 		"-x264opts", "keyint=30:min-keyint=30:scenecut=-1",
 		"-f", "hls",
@@ -48,5 +49,8 @@ func buildCommand(urls []string) *exec.Cmd {
 		"output/playlist.m3u8",
 	)
 
-	return exec.Command("ffmpeg", args...)
+	cmd := exec.Command("ffmpeg", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd
 }
