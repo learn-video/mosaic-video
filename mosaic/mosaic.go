@@ -20,6 +20,10 @@ func (r *FFMPEGCommand) Execute(command string, args ...string) error {
 	return cmd.Run()
 }
 
+func GenerateMosaic(executor Command, command string, args ...string) error {
+	return executor.Execute(command, args...)
+}
+
 func BuildCommand(commandPath string, key string, urls []string) (string, []string) {
 	args := []string{}
 

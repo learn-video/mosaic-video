@@ -22,5 +22,5 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 		locker,
 	)
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 }

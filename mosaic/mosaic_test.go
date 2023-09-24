@@ -3,8 +3,10 @@ package mosaic_test
 import (
 	"testing"
 
+	"github.com/mauricioabreu/mosaic-video/mocks"
 	"github.com/mauricioabreu/mosaic-video/mosaic"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestBuildFFMPEGCommand(t *testing.T) {
@@ -67,4 +69,15 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			assert.ElementsMatch(t, tt.expectedArgs, args)
 		})
 	}
+}
+
+func TestGenerateMosaic(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	cmdExecutor := mocks.NewMockCommand(ctrl)
+	cmdExecutor.EXPECT().Execute("ffmpeg", "arg1", "arg2").Return(nil)
+
+	err := mosaic.GenerateMosaic(cmdExecutor, "ffmpeg", "arg1", "arg2")
+	assert.NoError(t, err)
 }
