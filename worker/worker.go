@@ -51,13 +51,15 @@ func (r *RedisLock) Refresh(ctx context.Context, ttl time.Duration) error {
 }
 
 func GenerateMosaic(key string, urls []string, locker Locker, cmdExecutor mosaic.Command) error {
-	_, err := locker.Obtain(context.Background(), key, 5*time.Second)
+	ctx := context.Background()
+	lock, err := locker.Obtain(ctx, key, 5*time.Second)
 	if err != nil {
 		return err
 	}
 
 	cmdPath, args := mosaic.BuildCommand("ffmpeg", key, urls)
 	if err := cmdExecutor.Execute(cmdPath, args...); err != nil {
+		lock.Release(ctx)
 		return err
 	}
 
