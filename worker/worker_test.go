@@ -20,6 +20,25 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 		"mosaicvideo1",
 		urls,
 		locker,
+		nil,
+	)
+
+	assert.Error(t, err)
+}
+
+func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	locker := mocks.NewMockLocker(ctrl)
+	urls := []string{"http://mosaicvideos.com/video1.m3u8", "http://mosaicvideos.com/video2.m3u8"}
+	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo1", gomock.Any()).Return(nil, nil)
+	cmdExecutor := mocks.NewMockCommand(ctrl)
+	cmdExecutor.EXPECT().Execute("ffmpeg", gomock.Any()).Return(errors.New("error executing command"))
+
+	err := worker.GenerateMosaic(
+		"mosaicvideo1",
+		urls,
+		locker,
+		cmdExecutor,
 	)
 
 	assert.Error(t, err)

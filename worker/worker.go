@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/bsm/redislock"
+	"github.com/mauricioabreu/mosaic-video/mosaic"
 )
 
 type Locker interface {
@@ -49,9 +50,14 @@ func (r *RedisLock) Refresh(ctx context.Context, ttl time.Duration) error {
 	return r.lock.Refresh(ctx, ttl, nil)
 }
 
-func GenerateMosaic(key string, urls []string, locker Locker) error {
+func GenerateMosaic(key string, urls []string, locker Locker, cmdExecutor mosaic.Command) error {
 	_, err := locker.Obtain(context.Background(), key, 5*time.Second)
 	if err != nil {
+		return err
+	}
+
+	cmdPath, args := mosaic.BuildCommand("ffmpeg", key, urls)
+	if err := cmdExecutor.Execute(cmdPath, args...); err != nil {
 		return err
 	}
 
