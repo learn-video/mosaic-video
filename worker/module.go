@@ -17,14 +17,14 @@ func Run(lc fx.Lifecycle, logger *zap.SugaredLogger, locker *locking.RedisLocker
 				for {
 					logger.Info("worker is running")
 					urls := []string{
-						"https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/level_2.m3u8",
+						"https://ireplay.tv/test/rate_5_28.m3u8",
 						"https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/level_4.m3u8",
 					}
 
 					if err := GenerateMosaic("test", urls, locker, &mosaic.FFMPEGCommand{}); err != nil {
 						logger.Fatal(err)
 					}
-					time.Sleep(30 * time.Second)
+					time.Sleep(120 * time.Second)
 				}
 			}()
 			return nil
