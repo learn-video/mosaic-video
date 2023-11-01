@@ -14,6 +14,7 @@ func Run(lc fx.Lifecycle, logger *zap.SugaredLogger, locker *locking.RedisLocker
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
+				runningProcesses := make(map[string]string)
 				for {
 					logger.Info("worker is running")
 					urls := []string{
@@ -21,7 +22,7 @@ func Run(lc fx.Lifecycle, logger *zap.SugaredLogger, locker *locking.RedisLocker
 						"https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/level_4.m3u8",
 					}
 
-					if err := GenerateMosaic("test", urls, locker, &mosaic.FFMPEGCommand{}); err != nil {
+					if err := GenerateMosaic("test", urls, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
 						logger.Fatal(err)
 					}
 					time.Sleep(120 * time.Second)

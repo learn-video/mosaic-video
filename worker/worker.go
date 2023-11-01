@@ -8,7 +8,12 @@ import (
 	"github.com/mauricioabreu/mosaic-video/mosaic"
 )
 
-func GenerateMosaic(key string, urls []string, locker locking.Locker, cmdExecutor mosaic.Command) error {
+func GenerateMosaic(key string, urls []string, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]string) error {
+	_, exists := runningProcesses[key]
+	if exists {
+		return nil
+	}
+
 	ctx := context.Background()
 	lock, err := locker.Obtain(ctx, key, 5*time.Second)
 	if err != nil {
@@ -20,6 +25,8 @@ func GenerateMosaic(key string, urls []string, locker locking.Locker, cmdExecuto
 		lock.Release(ctx)
 		return err
 	}
+
+	runningProcesses[key] = key
 
 	return nil
 }
