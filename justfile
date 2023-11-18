@@ -1,5 +1,5 @@
 clean:
-    rm output/*
+    rm -r output/*
 
 test:
     go test -v ./...
