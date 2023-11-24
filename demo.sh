@@ -19,7 +19,7 @@
 #     output/playlist.m3u8
 
 ffmpeg \
-    -i  https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/tears-of-steel-audio_eng=128002-video_eng=1001000.m3u8 \
+    -i https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/tears-of-steel-audio_eng=128002-video_eng=1001000.m3u8 \
     -i https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/level_4.m3u8 \
     -filter_complex " \
         [0:v] setpts=PTS-STARTPTS, scale=qvga [v0]; \
