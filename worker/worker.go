@@ -8,7 +8,7 @@ import (
 	"github.com/mauricioabreu/mosaic-video/mosaic"
 )
 
-func GenerateMosaic(key string, urls []string, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]string) error {
+func GenerateMosaic(key string, medias []mosaic.Media, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]string) error {
 	_, exists := runningProcesses[key]
 	if exists {
 		return nil
@@ -20,7 +20,7 @@ func GenerateMosaic(key string, urls []string, locker locking.Locker, cmdExecuto
 		return err
 	}
 
-	cmdPath, args := mosaic.BuildCommand("ffmpeg", key, urls)
+	cmdPath, args := mosaic.BuildCommand("ffmpeg", key, medias)
 	if err := cmdExecutor.Execute(cmdPath, args...); err != nil {
 		lock.Release(ctx)
 		return err

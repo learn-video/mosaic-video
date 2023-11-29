@@ -14,7 +14,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 		command      string
 		name         string
 		key          string
-		urls         []string
+		medias       []mosaic.Media
 		expectedCmd  string
 		expectedArgs []string
 	}{
@@ -22,7 +22,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			command:     "ffmpeg",
 			name:        "Single URL",
 			key:         "mosaicvideo",
-			urls:        []string{"http://example.com/mosaicvideo.m3u8"},
+			medias:      []mosaic.Media{{URL: "http://example.com/mosaicvideo.m3u8", Position: "0_0"}},
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
 				"-i", "http://example.com/mosaicvideo.m3u8",
@@ -38,13 +38,10 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			},
 		},
 		{
-			command: "ffmpeg",
-			name:    "Multiple URLs",
-			key:     "mosaicvideo",
-			urls: []string{
-				"http://example.com/mosaicvideo_1.m3u8",
-				"http://example.com/mosaicvideo_2.m3u8",
-			},
+			command:     "ffmpeg",
+			name:        "Multiple URLs",
+			key:         "mosaicvideo",
+			medias:      []mosaic.Media{{URL: "http://example.com/mosaicvideo_1.m3u8", Position: "0_0"}, {URL: "http://example.com/mosaicvideo_2.m3u8", Position: "w0_0"}},
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
 				"-i", "http://example.com/mosaicvideo_1.m3u8",
@@ -64,7 +61,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cmd, args := mosaic.BuildCommand(tt.command, tt.key, tt.urls)
+			cmd, args := mosaic.BuildCommand(tt.command, tt.key, tt.medias)
 			assert.Equal(t, tt.expectedCmd, cmd)
 			assert.ElementsMatch(t, tt.expectedArgs, args)
 		})

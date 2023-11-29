@@ -17,14 +17,18 @@ func Run(lc fx.Lifecycle, logger *zap.SugaredLogger, locker *locking.RedisLocker
 				runningProcesses := make(map[string]string)
 				for {
 					logger.Info("worker is running")
-					urls := []string{
-						"https://ireplay.tv/test/rate_5_28.m3u8",
-						"https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/level_4.m3u8",
-					}
 
-					if err := GenerateMosaic("test", urls, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
+					tasks, err := mosaic.FetchMosaicTasks("http://localhost:8080/mosaic")
+					if err != nil {
 						logger.Fatal(err)
 					}
+
+					for _, task := range tasks {
+						if err := GenerateMosaic(task.Name, task.Medias, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
+							logger.Fatal(err)
+						}
+					}
+
 					time.Sleep(120 * time.Second)
 				}
 			}()

@@ -36,7 +36,7 @@ ffmpeg \
     -hls_list_size 6 \
     -hls_flags delete_segments \
     -hls_segment_filename "output/seg_%v_%03d.ts" \
-    -var_stream_map "a:0,agroup:audio,default:yes,language:ENG a:1,agroup:audio,language:CNH v:0,agroup:audio" \
+    -var_stream_map "a:0,agroup:audio,default:yes,language:ENG a:1,agroup:audio,language:ENG v:0,agroup:audio" \
     -master_pl_name master.m3u8 \
     "output/playlist_%v.m3u8"
 

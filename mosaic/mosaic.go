@@ -24,22 +24,31 @@ func GenerateMosaic(executor Command, command string, args ...string) error {
 	return executor.Execute(command, args...)
 }
 
-func BuildCommand(commandPath string, key string, urls []string) (string, []string) {
+func BuildCommand(commandPath string, key string, medias []Media) (string, []string) {
 	args := []string{}
 
-	for _, url := range urls {
-		args = append(args, "-i", url)
+	for _, media := range medias {
+		args = append(args, "-i", media.URL)
 	}
 
-	positions := []string{"0_0", "w0_0", "0_h0", "w0_h0"}
-	xstackLayout := strings.Join(positions[:len(urls)], "|")
+	positions := make([]string, len(medias))
+	for i, media := range medias {
+		positions[i] = media.Position
+	}
+	xstackLayout := strings.Join(positions, "|")
 
 	inputLabels := make([]string, 0)
 	filterComplex := ""
-	for i := range urls {
+	for i := range medias {
 		inputLabels = append(inputLabels, fmt.Sprintf("[l%d]", i))
 		filterComplex += fmt.Sprintf("[%d:v] setpts=PTS-STARTPTS, scale=qvga %s; ", i, inputLabels[i])
 	}
+
+	urls := make([]string, 0)
+	for _, url := range medias {
+		urls = append(urls, url.URL)
+	}
+
 	filterComplex += fmt.Sprintf("%sxstack=inputs=%d:layout=%s[out]", strings.Join(inputLabels, ""), len(urls), xstackLayout)
 
 	args = append(args,
