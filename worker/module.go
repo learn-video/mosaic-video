@@ -15,7 +15,7 @@ func Run(lc fx.Lifecycle, config *config.Config, logger *zap.SugaredLogger, lock
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
-				runningProcesses := make(map[string]string)
+				runningProcesses := make(map[string]bool)
 				for {
 					logger.Info("worker is running")
 
@@ -25,9 +25,16 @@ func Run(lc fx.Lifecycle, config *config.Config, logger *zap.SugaredLogger, lock
 					}
 
 					for _, task := range tasks {
-						if err := GenerateMosaic(task.Name, task.Medias, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
-							logger.Fatal(err)
-						}
+						go func(task mosaic.Mosaic) {
+							defer func() {
+								// Once finished, unmark the task
+								delete(runningProcesses, task.Name)
+							}()
+
+							if err := GenerateMosaic(task.Name, task.Medias, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
+								logger.Fatal(err)
+							}
+						}(task)
 					}
 
 					time.Sleep(120 * time.Second)

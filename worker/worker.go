@@ -8,7 +8,7 @@ import (
 	"github.com/mauricioabreu/mosaic-video/mosaic"
 )
 
-func GenerateMosaic(key string, medias []mosaic.Media, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]string) error {
+func GenerateMosaic(key string, medias []mosaic.Media, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
 	_, exists := runningProcesses[key]
 	if exists {
 		return nil
@@ -26,7 +26,7 @@ func GenerateMosaic(key string, medias []mosaic.Media, locker locking.Locker, cm
 		return err
 	}
 
-	runningProcesses[key] = key
+	runningProcesses[key] = true
 
 	return nil
 }
