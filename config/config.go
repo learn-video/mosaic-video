@@ -7,6 +7,9 @@ type Config struct {
 		Host string
 		Port string
 	}
+	API struct {
+		URL string
+	}
 }
 
 func NewConfig() *Config {
@@ -17,6 +20,11 @@ func NewConfig() *Config {
 		}{
 			Host: os.Getenv("REDIS_HOST"),
 			Port: os.Getenv("REDIS_PORT"),
+		},
+		API: struct {
+			URL string
+		}{
+			URL: os.Getenv("MOSAICS_API_URL"),
 		},
 	}
 }

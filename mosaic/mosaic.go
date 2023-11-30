@@ -31,36 +31,61 @@ func BuildCommand(commandPath string, key string, medias []Media) (string, []str
 		args = append(args, "-i", media.URL)
 	}
 
+	videoFilters := make([]string, 0)
+	audioFilters := make([]string, 0)
+	for i := range medias {
+		videoLabel := fmt.Sprintf("[v%d]", i)
+		audioLabel := fmt.Sprintf("[a%d]", i)
+		videoFilters = append(videoFilters, fmt.Sprintf("[%d:v] setpts=PTS-STARTPTS, scale=qvga %s;", i, videoLabel))
+		audioFilters = append(audioFilters, fmt.Sprintf("[%d:a] aresample=async=1 %s", i, audioLabel))
+	}
+
 	positions := make([]string, len(medias))
 	for i, media := range medias {
 		positions[i] = media.Position
 	}
-	xstackLayout := strings.Join(positions, "|")
 
-	inputLabels := make([]string, 0)
-	filterComplex := ""
+	xstackInputs := make([]string, len(medias))
 	for i := range medias {
-		inputLabels = append(inputLabels, fmt.Sprintf("[l%d]", i))
-		filterComplex += fmt.Sprintf("[%d:v] setpts=PTS-STARTPTS, scale=qvga %s; ", i, inputLabels[i])
+		xstackInputs[i] = fmt.Sprintf("[v%d]", i)
 	}
-
-	urls := make([]string, 0)
-	for _, url := range medias {
-		urls = append(urls, url.URL)
-	}
-
-	filterComplex += fmt.Sprintf("%sxstack=inputs=%d:layout=%s[out]", strings.Join(inputLabels, ""), len(urls), xstackLayout)
+	xstackLayout := strings.Join(positions, "|")
+	filterComplex := fmt.Sprintf("%s%sxstack=inputs=%d:layout=%s[outv]; %s",
+		strings.Join(videoFilters, ""),
+		strings.Join(xstackInputs, ""),
+		len(medias),
+		xstackLayout,
+		strings.Join(audioFilters, ";"))
 
 	args = append(args,
 		"-filter_complex", filterComplex,
-		"-map", "[out]",
-		"-c:v", "libx264",
-		"-x264opts", "keyint=30:min-keyint=30:scenecut=-1",
+		"-map", "[outv]", "-c:v", "libx264", "-b:v", "800k", "-x264opts", "keyint=30:min-keyint=30:scenecut=-1",
+	)
+
+	for i := range medias {
+		args = append(args, "-map", fmt.Sprintf("[a%d]", i), "-c:a", "aac", "-b:a", "128k")
+	}
+
+	varStreamMapParts := make([]string, 0)
+	for i := range medias {
+		varStreamMapPart := fmt.Sprintf("a:%d,agroup:audio,language:ENG", i)
+		if i == 0 {
+			varStreamMapPart += ",default:yes"
+		}
+		varStreamMapParts = append(varStreamMapParts, varStreamMapPart)
+	}
+	varStreamMapParts = append(varStreamMapParts, "v:0,agroup:audio")
+	varStreamMap := fmt.Sprintf("%q", strings.Join(varStreamMapParts, " "))
+
+	args = append(args,
 		"-f", "hls",
-		"-hls_time", "5",
-		"-hls_start_number_source", "epoch",
-		"-hls_segment_filename", "output/segment%03d.ts",
-		"output/playlist.m3u8",
+		"-hls_time", "4",
+		"-hls_list_size", "6",
+		"-hls_flags", "delete_segments",
+		"-hls_segment_filename", "output/seg_%v_%03d.ts",
+		"-var_stream_map", varStreamMap,
+		"-master_pl_name", "master.m3u8",
+		"output/playlist_%v.m3u8",
 	)
 
 	return commandPath, args

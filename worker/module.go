@@ -4,13 +4,14 @@ import (
 	"context"
 	"time"
 
+	"github.com/mauricioabreu/mosaic-video/config"
 	"github.com/mauricioabreu/mosaic-video/locking"
 	"github.com/mauricioabreu/mosaic-video/mosaic"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-func Run(lc fx.Lifecycle, logger *zap.SugaredLogger, locker *locking.RedisLocker) {
+func Run(lc fx.Lifecycle, config *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
@@ -18,7 +19,7 @@ func Run(lc fx.Lifecycle, logger *zap.SugaredLogger, locker *locking.RedisLocker
 				for {
 					logger.Info("worker is running")
 
-					tasks, err := mosaic.FetchMosaicTasks("http://localhost:8080/mosaic")
+					tasks, err := mosaic.FetchMosaicTasks(config.API.URL)
 					if err != nil {
 						logger.Fatal(err)
 					}
