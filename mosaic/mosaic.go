@@ -75,7 +75,7 @@ func BuildCommand(commandPath string, key string, medias []Media) (string, []str
 		varStreamMapParts = append(varStreamMapParts, varStreamMapPart)
 	}
 	varStreamMapParts = append(varStreamMapParts, "v:0,agroup:audio")
-	varStreamMap := fmt.Sprintf("%q", strings.Join(varStreamMapParts, " "))
+	varStreamMap := strings.Join(varStreamMapParts, " ")
 
 	args = append(args,
 		"-f", "hls",

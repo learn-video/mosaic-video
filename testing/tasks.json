@@ -1,0 +1,16 @@
+[
+    {
+        "name": "ExampleMosaic",
+        "medias": [
+            {
+                "url": "https://rtvelivestream.akamaized.net/rtvesec/24h/24h_main_720.m3u8",
+                "position": "0_0"
+            },
+            {
+                "url": "https://canadaremar2.todostreaming.es/live/peque-pequetv.m3u8",
+                "position": "w0_0"
+            }
+        ],
+        "with_audio": true
+    }
+]
