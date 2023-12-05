@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/mauricioabreu/mosaic-video/config"
@@ -12,7 +13,7 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
+	if err := godotenv.Load(os.Getenv("ENV_FILE")); err != nil {
 		log.Println("Could not load .env file")
 	}
 

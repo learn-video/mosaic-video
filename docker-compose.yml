@@ -1,0 +1,32 @@
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  worker:
+    build: .
+    environment:
+      - ENV_FILE=/app/.env
+      - REDIS_HOST=redis
+      - MOSAICS_API_URL=http://api:3000/tasks.json
+    volumes:
+      - ./:/app
+  api:
+    image: python:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./testing:/api
+    working_dir: /api
+    command:
+      [
+        "python",
+        "-m",
+        "http.server",
+        "3000",
+        "--bind",
+        "0.0.0.0"
+      ]
+    init: true # make server PID 1
+    environment:
+      - PYTHONUNBUFFERED=True
