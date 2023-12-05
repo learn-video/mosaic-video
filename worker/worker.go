@@ -15,7 +15,7 @@ func GenerateMosaic(key string, medias []mosaic.Media, locker locking.Locker, cm
 	}
 
 	ctx := context.Background()
-	lock, err := locker.Obtain(ctx, key, 5*time.Second)
+	lock, err := locker.Obtain(ctx, key, 120*time.Second)
 	if err != nil {
 		return err
 	}

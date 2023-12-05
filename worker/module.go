@@ -37,7 +37,7 @@ func Run(lc fx.Lifecycle, config *config.Config, logger *zap.SugaredLogger, lock
 						}(task)
 					}
 
-					time.Sleep(120 * time.Second)
+					time.Sleep(60 * time.Second)
 				}
 			}()
 			return nil
