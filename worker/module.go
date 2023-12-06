@@ -32,7 +32,7 @@ func Run(lc fx.Lifecycle, config *config.Config, logger *zap.SugaredLogger, lock
 							}()
 
 							if err := GenerateMosaic(task.Name, task.Medias, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
-								logger.Fatal(err)
+								logger.Error(err)
 							}
 						}(task)
 					}
