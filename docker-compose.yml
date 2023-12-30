@@ -3,14 +3,6 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-  worker:
-    build: .
-    environment:
-      - ENV_FILE=/app/.env
-      - REDIS_HOST=redis
-      - MOSAICS_API_URL=http://api:3000/tasks.json
-    volumes:
-      - ./:/app
   api:
     image: python:latest
     ports:
