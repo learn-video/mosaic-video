@@ -19,6 +19,16 @@ It uses ffmpeg to capture the video and position them in a grid.
 * Add support for RTMP inputs;
 * Add support to save the mosaics into storage.
 
+## Contributing
+
+Feel free to contribute to this project by opening issues or pull requests.
+
+`just test` to run the tests.
+
+`just deps` starts a mock API and Redis.
+
+`just run` starts the go process to generate mosaics.
+
 ## Installation
 
 We are still working on the installation process. For now, you can install it by cloning the repository and running `go run main.go`.

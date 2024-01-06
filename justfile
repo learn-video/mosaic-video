@@ -4,5 +4,8 @@ clean:
 test:
     go test -v ./...
 
-run:
+deps:
     docker compose up
+
+run:
+    go run main.go
