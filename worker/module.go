@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func Run(lc fx.Lifecycle, config *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker) {
+func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
@@ -19,19 +19,19 @@ func Run(lc fx.Lifecycle, config *config.Config, logger *zap.SugaredLogger, lock
 				for {
 					logger.Info("worker is running")
 
-					tasks, err := mosaic.FetchMosaicTasks(config.API.URL)
+					tasks, err := mosaic.FetchMosaicTasks(cfg.API.URL)
 					if err != nil {
 						logger.Fatal(err)
 					}
 
 					for _, task := range tasks {
-						go func(task mosaic.Mosaic) {
+						go func(m mosaic.Mosaic) {
 							defer func() {
 								// Once finished, unmark the task
 								delete(runningProcesses, task.Name)
 							}()
 
-							if err := GenerateMosaic(task.Name, task.Medias, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
+							if err := GenerateMosaic(m, cfg, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
 								logger.Error(err)
 							}
 						}(task)

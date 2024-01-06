@@ -4,29 +4,31 @@ import (
 	"context"
 	"time"
 
+	"github.com/mauricioabreu/mosaic-video/config"
 	"github.com/mauricioabreu/mosaic-video/locking"
 	"github.com/mauricioabreu/mosaic-video/mosaic"
+	"github.com/mauricioabreu/mosaic-video/mosaic/command"
 )
 
-func GenerateMosaic(key string, medias []mosaic.Media, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
-	_, exists := runningProcesses[key]
+func GenerateMosaic(mosaic mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
+	_, exists := runningProcesses[mosaic.Name]
 	if exists {
 		return nil
 	}
 
 	ctx := context.Background()
-	lock, err := locker.Obtain(ctx, key, 120*time.Second)
+	lock, err := locker.Obtain(ctx, mosaic.Name, 120*time.Second)
 	if err != nil {
 		return err
 	}
 
-	cmdPath, args := mosaic.BuildCommand("ffmpeg", key, medias)
-	if err := cmdExecutor.Execute(cmdPath, args...); err != nil {
+	args := command.Build(mosaic, cfg)
+	if err := cmdExecutor.Execute("ffmpeg", args...); err != nil {
 		lock.Release(ctx)
 		return err
 	}
 
-	runningProcesses[key] = true
+	runningProcesses[mosaic.Name] = true
 
 	return nil
 }
