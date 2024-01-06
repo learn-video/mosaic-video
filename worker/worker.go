@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/mauricioabreu/mosaic-video/config"
@@ -10,7 +11,15 @@ import (
 	"github.com/mauricioabreu/mosaic-video/mosaic/command"
 )
 
+func createPath(path string) error {
+	return os.MkdirAll(path, os.ModePerm)
+}
+
 func GenerateMosaic(mosaic mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
+	if err := createPath(cfg.AssetsPath + "/" + mosaic.Name); err != nil {
+		return err
+	}
+
 	_, exists := runningProcesses[mosaic.Name]
 	if exists {
 		return nil

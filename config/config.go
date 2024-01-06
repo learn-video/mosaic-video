@@ -10,7 +10,8 @@ type Config struct {
 	API struct {
 		URL string
 	}
-	AssetsPath string
+	AssetsPath  string
+	StaticsPath string
 }
 
 func NewConfig() *Config {
@@ -27,6 +28,7 @@ func NewConfig() *Config {
 		}{
 			URL: os.Getenv("MOSAICS_API_URL"),
 		},
-		AssetsPath: os.Getenv("ASSETS_PATH"),
+		AssetsPath:  os.Getenv("ASSETS_PATH"),
+		StaticsPath: os.Getenv("STATICS_PATH"),
 	}
 }

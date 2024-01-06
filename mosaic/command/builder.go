@@ -21,6 +21,7 @@ func Build(mosaic mosaic.Mosaic, cfg *config.Config) []string {
 
 	return []string{
 		"-loglevel", "error",
+		"-i", cfg.StaticsPath + "/background.jpg",
 		"-i", mosaic.Medias[0].URL,
 		"-i", mosaic.Medias[1].URL,
 		"-filter_complex", filterComplex,
