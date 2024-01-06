@@ -2,6 +2,8 @@
 
 Generate mosaic videos from live inputs.
 
+![Mosaic with two input videos and a background image](docs/static/sample.png)
+
 ## What is it?
 
 *Mosaic Video* is a project designed to transform live streaming videos into nice mosaics in realtime.
