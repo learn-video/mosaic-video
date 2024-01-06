@@ -4,9 +4,24 @@ Generate mosaic videos from live inputs.
 
 ## What is it?
 
-Mosaic Video is a project designed to transform live streaming videos into nice mosaics in realtime.
+*Mosaic Video* is a project designed to transform live streaming videos into nice mosaics in realtime.
 
 It uses ffmpeg to capture the video and position them in a grid.
+
+## Features
+
+* Generate mosaic from multiple video inputs;
+* Audio support (first video input);
+* Avaiable inputs: HLS.
+
+## Roadmap
+
+* Add support for RTMP inputs;
+* Add support to save the mosaics into storage.
+
+## Installation
+
+We are still working on the installation process. For now, you can install it by cloning the repository and running `go run main.go`.
 
 ## Contributing
 
