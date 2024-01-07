@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/mauricioabreu/mosaic-video/config"
-	"github.com/mauricioabreu/mosaic-video/locking"
-	"github.com/mauricioabreu/mosaic-video/mosaic"
+	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/locking"
+	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )

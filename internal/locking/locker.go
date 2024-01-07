@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/bsm/redislock"
-	"github.com/mauricioabreu/mosaic-video/config"
+	"github.com/mauricioabreu/mosaic-video/internal/config"
 	"github.com/redis/go-redis/v9"
 )
 

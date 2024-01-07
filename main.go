@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/mauricioabreu/mosaic-video/config"
-	"github.com/mauricioabreu/mosaic-video/locking"
-	"github.com/mauricioabreu/mosaic-video/logging"
-	"github.com/mauricioabreu/mosaic-video/worker"
+	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/locking"
+	"github.com/mauricioabreu/mosaic-video/internal/logging"
+	"github.com/mauricioabreu/mosaic-video/internal/worker"
 	"go.uber.org/fx"
 )
 

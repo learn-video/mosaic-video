@@ -3,8 +3,8 @@ package command
 import (
 	"fmt"
 
-	"github.com/mauricioabreu/mosaic-video/config"
-	"github.com/mauricioabreu/mosaic-video/mosaic"
+	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
 )
 
 func Build(mosaic mosaic.Mosaic, cfg *config.Config) []string {

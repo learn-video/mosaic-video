@@ -13,7 +13,7 @@ import (
 	reflect "reflect"
 	time "time"
 
-	locking "github.com/mauricioabreu/mosaic-video/locking"
+	locking "github.com/mauricioabreu/mosaic-video/internal/locking"
 	gomock "go.uber.org/mock/gomock"
 )
 

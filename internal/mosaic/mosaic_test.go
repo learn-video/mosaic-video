@@ -3,10 +3,10 @@ package mosaic_test
 import (
 	"testing"
 
-	"github.com/mauricioabreu/mosaic-video/config"
-	"github.com/mauricioabreu/mosaic-video/mocks"
-	"github.com/mauricioabreu/mosaic-video/mosaic"
-	"github.com/mauricioabreu/mosaic-video/mosaic/command"
+	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/mocks"
+	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
+	"github.com/mauricioabreu/mosaic-video/internal/mosaic/command"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
