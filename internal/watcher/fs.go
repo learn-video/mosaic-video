@@ -7,17 +7,14 @@ import (
 
 type FileSystemWatcher struct {
 	events chan notify.EventInfo
-	done   chan bool
 	path   string
 }
 
 func NewFileSystemWatcher(cfg *config.Config) (*FileSystemWatcher, error) {
 	c := make(chan notify.EventInfo, 1)
-	d := make(chan bool)
 
 	return &FileSystemWatcher{
 		events: c,
-		done:   d,
 		path:   cfg.AssetsPath,
 	}, nil
 }
@@ -27,7 +24,7 @@ func (fsw *FileSystemWatcher) Start() error {
 }
 
 func (fsw *FileSystemWatcher) Stop() {
-	fsw.done <- true
+	notify.Stop(fsw.events)
 }
 
 func (fsw *FileSystemWatcher) Events() chan notify.EventInfo {
