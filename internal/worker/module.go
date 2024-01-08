@@ -15,12 +15,13 @@ import (
 func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker, fsw *watcher.FileSystemWatcher) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
+			if err := fsw.Start(); err != nil {
+				logger.Errorf("Failed to start file system watcher: %v", err)
+				return err
+			}
+
 			go func() {
 				runningProcesses := make(map[string]bool)
-
-				if err := fsw.Start(); err != nil {
-					logger.Fatal(err)
-				}
 
 				go func() {
 					for event := range fsw.Events() {
