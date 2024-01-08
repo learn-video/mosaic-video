@@ -11,7 +11,7 @@ type FileSystemWatcher struct {
 	errors  chan error
 }
 
-func NewFileSystemWatcher(cfg config.Config) (*FileSystemWatcher, error) {
+func NewFileSystemWatcher(cfg *config.Config) (*FileSystemWatcher, error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err

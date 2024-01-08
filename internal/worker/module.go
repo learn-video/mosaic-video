@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker, w watcher.Watcher) {
+func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker, w *watcher.FileSystemWatcher) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
