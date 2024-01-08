@@ -27,6 +27,8 @@ Feel free to contribute to this project by opening issues or pull requests.
 
 `just test` to run the tests.
 
+`just lint` to run linters.
+
 `just deps` starts a mock API and Redis.
 
 `just run` starts the go process to generate mosaics.
