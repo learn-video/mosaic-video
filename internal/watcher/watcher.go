@@ -1,13 +1,8 @@
-// Package watcher provides a file system watcher, useful to collect events
-// from the assets directory while also being able to catch errors.
+// Package watcher provides a watcher that can be used to watch for changes
+// in the local filesystem.
 package watcher
 
-import (
-	"github.com/fsnotify/fsnotify"
-)
-
 type Watcher interface {
-	Run()
-	Events() <-chan fsnotify.Event
-	Errors() <-chan error
+	Start() error
+	Stop()
 }

@@ -15,7 +15,6 @@ import (
 func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	locker := mocks.NewMockLocker(ctrl)
-	watcher := mocks.NewMockWatcher(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
 		Medias: []mosaic.Media{
@@ -33,16 +32,15 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 		locker,
 		nil,
 		runningProcesses,
-		watcher,
 	)
 
 	assert.Error(t, err)
 }
 
 func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
+	cfg := &config.Config{AssetsPath: "output"}
 	ctrl := gomock.NewController(t)
 	locker := mocks.NewMockLocker(ctrl)
-	watcher := mocks.NewMockWatcher(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
 		Medias: []mosaic.Media{
@@ -50,7 +48,6 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 			{URL: "http://example.com/mosaicvideo_2.m3u8"},
 		},
 	}
-	cfg := &config.Config{AssetsPath: "output"}
 	lock := mocks.NewMockLock(ctrl)
 	lock.EXPECT().Release(gomock.Any()).Return(nil)
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(lock, nil)
@@ -65,7 +62,6 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 		locker,
 		cmdExecutor,
 		runningProcesses,
-		watcher,
 	)
 
 	assert.Error(t, err)

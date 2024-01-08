@@ -12,22 +12,19 @@ import (
 	"go.uber.org/zap"
 )
 
-func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker, w *watcher.FileSystemWatcher) {
+func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker, fsw *watcher.FileSystemWatcher) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
 				runningProcesses := make(map[string]bool)
 
-				w.Run()
+				if err := fsw.Start(); err != nil {
+					logger.Fatal(err)
+				}
 
 				go func() {
-					for {
-						select {
-						case event := <-w.Events():
-							logger.Infof("File system event: %v", event)
-						case err := <-w.Errors():
-							logger.Errorf("File system error: %v", err)
-						}
+					for event := range fsw.Events() {
+						logger.Infof("File system event: %v", event)
 					}
 				}()
 
@@ -46,7 +43,7 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 								delete(runningProcesses, m.Name)
 							}()
 
-							if err := GenerateMosaic(m, cfg, locker, &mosaic.FFMPEGCommand{}, runningProcesses, w); err != nil {
+							if err := GenerateMosaic(m, cfg, locker, &mosaic.FFMPEGCommand{}, runningProcesses); err != nil {
 								logger.Error(err)
 							}
 						}(task)
@@ -55,6 +52,10 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 					time.Sleep(60 * time.Second)
 				}
 			}()
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			fsw.Stop()
 			return nil
 		},
 	})

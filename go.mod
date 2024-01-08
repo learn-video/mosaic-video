@@ -4,9 +4,9 @@ go 1.21.1
 
 require (
 	github.com/bsm/redislock v0.9.4
-	github.com/fsnotify/fsnotify v1.7.0
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.2.0
+	github.com/rjeczalik/notify v0.9.3
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/fx v1.20.0
 	go.uber.org/mock v0.3.0

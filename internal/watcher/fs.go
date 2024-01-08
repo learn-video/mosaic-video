@@ -1,50 +1,35 @@
 package watcher
 
 import (
-	"github.com/fsnotify/fsnotify"
 	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/rjeczalik/notify"
 )
 
 type FileSystemWatcher struct {
-	watcher *fsnotify.Watcher
-	events  chan fsnotify.Event
-	errors  chan error
+	events chan notify.EventInfo
+	done   chan bool
+	path   string
 }
 
 func NewFileSystemWatcher(cfg *config.Config) (*FileSystemWatcher, error) {
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := watcher.Add(cfg.AssetsPath); err != nil {
-		return nil, err
-	}
+	c := make(chan notify.EventInfo, 1)
+	d := make(chan bool)
 
 	return &FileSystemWatcher{
-		watcher: watcher,
-		events:  make(chan fsnotify.Event),
-		errors:  make(chan error),
+		events: c,
+		done:   d,
+		path:   cfg.AssetsPath,
 	}, nil
 }
 
-func (fsw *FileSystemWatcher) Run() {
-	go func() {
-		for {
-			select {
-			case event := <-fsw.watcher.Events:
-				fsw.events <- event
-			case err := <-fsw.watcher.Errors:
-				fsw.errors <- err
-			}
-		}
-	}()
+func (fsw *FileSystemWatcher) Start() error {
+	return notify.Watch(fsw.path+"/...", fsw.events, notify.Write)
 }
 
-func (fsw *FileSystemWatcher) Events() <-chan fsnotify.Event {
+func (fsw *FileSystemWatcher) Stop() {
+	fsw.done <- true
+}
+
+func (fsw *FileSystemWatcher) Events() chan notify.EventInfo {
 	return fsw.events
-}
-
-func (fsw *FileSystemWatcher) Errors() <-chan error {
-	return fsw.errors
 }
