@@ -15,6 +15,7 @@ import (
 func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	locker := mocks.NewMockLocker(ctrl)
+	watcher := mocks.NewMockWatcher(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
 		Medias: []mosaic.Media{
@@ -32,6 +33,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 		locker,
 		nil,
 		runningProcesses,
+		watcher,
 	)
 
 	assert.Error(t, err)
@@ -40,6 +42,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	locker := mocks.NewMockLocker(ctrl)
+	watcher := mocks.NewMockWatcher(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
 		Medias: []mosaic.Media{
@@ -51,6 +54,7 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	lock := mocks.NewMockLock(ctrl)
 	lock.EXPECT().Release(gomock.Any()).Return(nil)
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(lock, nil)
+
 	cmdExecutor := mocks.NewMockCommand(ctrl)
 	cmdExecutor.EXPECT().Execute("ffmpeg", gomock.Any()).Return(errors.New("error executing command"))
 	runningProcesses := make(map[string]bool)
@@ -61,6 +65,7 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 		locker,
 		cmdExecutor,
 		runningProcesses,
+		watcher,
 	)
 
 	assert.Error(t, err)

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/fs"
 	"github.com/mauricioabreu/mosaic-video/internal/locking"
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic/command"
@@ -15,7 +16,7 @@ func createPath(path string) error {
 	return os.MkdirAll(path, os.ModePerm)
 }
 
-func GenerateMosaic(mosaic mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
+func GenerateMosaic(mosaic mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool, fsw fs.Watcher) error {
 	if err := createPath(cfg.AssetsPath + "/" + mosaic.Name); err != nil {
 		return err
 	}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/fs"
 	"github.com/mauricioabreu/mosaic-video/internal/locking"
 	"github.com/mauricioabreu/mosaic-video/internal/logging"
 	"github.com/mauricioabreu/mosaic-video/internal/worker"
@@ -27,6 +28,7 @@ func main() {
 			logging.NewLogger,
 			locking.NewRedisLocker,
 		),
+		fs.Module,
 		fx.Invoke(worker.Run),
 	)
 
