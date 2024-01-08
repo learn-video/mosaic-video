@@ -43,7 +43,7 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 						go func(m mosaic.Mosaic) {
 							defer func() {
 								// Once finished, unmark the task
-								delete(runningProcesses, task.Name)
+								delete(runningProcesses, m.Name)
 							}()
 
 							if err := GenerateMosaic(m, cfg, locker, &mosaic.FFMPEGCommand{}, runningProcesses, fsw); err != nil {
