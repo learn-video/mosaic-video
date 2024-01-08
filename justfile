@@ -4,6 +4,9 @@ clean:
 test:
     go test -v ./...
 
+lint:
+    golangci-lint run -v ./...
+
 deps:
     docker compose up
 
