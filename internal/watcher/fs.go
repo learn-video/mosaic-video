@@ -1,17 +1,9 @@
-// Package fs provides a file system watcher, useful to collect events
-// from the assets directory while also being able to catch errors.
-package fs
+package watcher
 
 import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/mauricioabreu/mosaic-video/internal/config"
 )
-
-type Watcher interface {
-	Run()
-	Events() <-chan fsnotify.Event
-	Errors() <-chan error
-}
 
 type FileSystemWatcher struct {
 	watcher *fsnotify.Watcher

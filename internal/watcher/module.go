@@ -1,4 +1,4 @@
-package fs
+package watcher
 
 import "go.uber.org/fx"
 

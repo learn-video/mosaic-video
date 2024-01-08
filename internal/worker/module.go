@@ -5,27 +5,27 @@ import (
 	"time"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
-	"github.com/mauricioabreu/mosaic-video/internal/fs"
 	"github.com/mauricioabreu/mosaic-video/internal/locking"
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
+	"github.com/mauricioabreu/mosaic-video/internal/watcher"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker, fsw fs.Watcher) {
+func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker, w watcher.Watcher) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
 				runningProcesses := make(map[string]bool)
 
-				fsw.Run()
+				w.Run()
 
 				go func() {
 					for {
 						select {
-						case event := <-fsw.Events():
+						case event := <-w.Events():
 							logger.Infof("File system event: %v", event)
-						case err := <-fsw.Errors():
+						case err := <-w.Errors():
 							logger.Errorf("File system error: %v", err)
 						}
 					}
@@ -46,7 +46,7 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 								delete(runningProcesses, m.Name)
 							}()
 
-							if err := GenerateMosaic(m, cfg, locker, &mosaic.FFMPEGCommand{}, runningProcesses, fsw); err != nil {
+							if err := GenerateMosaic(m, cfg, locker, &mosaic.FFMPEGCommand{}, runningProcesses, w); err != nil {
 								logger.Error(err)
 							}
 						}(task)
