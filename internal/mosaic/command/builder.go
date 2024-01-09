@@ -8,8 +8,8 @@ import (
 )
 
 func Build(mosaic mosaic.Mosaic, cfg *config.Config) []string {
-	segmentPattern := fmt.Sprintf("%s/%s/seg_%%s.ts", cfg.AssetsPath, mosaic.Name)
-	playlistPath := fmt.Sprintf("%s/%s/playlist.m3u8", cfg.AssetsPath, mosaic.Name)
+	segmentPattern := fmt.Sprintf("hls/%s/seg_%%s.ts", mosaic.Name)
+	playlistPath := fmt.Sprintf("hls/%s/playlist.m3u8", mosaic.Name)
 
 	filterComplex := "nullsrc=size=1920x1080 [background];" +
 		"[0:v] realtime, scale=1920x1080 [image];" +
@@ -34,11 +34,13 @@ func Build(mosaic mosaic.Mosaic, cfg *config.Config) []string {
 		"-r", "24",
 		"-c:a", "copy",
 		"-f", "hls",
+		"-hls_playlist_type", "event",
 		"-hls_time", "5",
-		"-hls_list_size", "12",
-		"-hls_flags", "delete_segments",
 		"-strftime", "1",
 		"-hls_segment_filename", segmentPattern,
-		playlistPath,
+		"-method", "PUT",
+		"-http_persistent", "1",
+		"-sc_threshold", "0",
+		fmt.Sprintf("http://localhost:8080/%s", playlistPath),
 	}
 }
