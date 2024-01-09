@@ -8,7 +8,6 @@ import (
 	"github.com/mauricioabreu/mosaic-video/internal/config"
 	"github.com/mauricioabreu/mosaic-video/internal/locking"
 	"github.com/mauricioabreu/mosaic-video/internal/logging"
-	"github.com/mauricioabreu/mosaic-video/internal/watcher"
 	"github.com/mauricioabreu/mosaic-video/internal/worker"
 	"go.uber.org/fx"
 )
@@ -28,7 +27,6 @@ func main() {
 			logging.NewLogger,
 			locking.NewRedisLocker,
 		),
-		watcher.Module,
 		fx.Invoke(worker.Run),
 	)
 
