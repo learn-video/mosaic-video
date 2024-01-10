@@ -24,10 +24,11 @@ type RedisLocker struct {
 	locker *redislock.Client
 }
 
-func NewRedisLocker(config *config.Config) *RedisLocker {
+func NewRedisLocker(cfg *config.Config) *RedisLocker {
 	client := redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", config.Redis.Host, config.Redis.Port),
+		Addr: fmt.Sprintf("%s:%s", cfg.Redis.Host, cfg.Redis.Port),
 	})
+
 	return &RedisLocker{locker: redislock.New(client)}
 }
 
@@ -36,6 +37,7 @@ func (r *RedisLocker) Obtain(ctx context.Context, key string, ttl time.Duration)
 	if err != nil {
 		return nil, err
 	}
+
 	return &RedisLock{lock: lock}, nil
 }
 
