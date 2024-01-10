@@ -43,7 +43,7 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 		fmt.Sprintf("http://localhost:8080/%s", playlistPath),
 	}
 
-	if mosaic.WithAudio {
+	if m.WithAudio {
 		args = append(args, "-map", "1:a")
 	}
 
