@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/storage/s3"
 	"go.uber.org/fx"
 )
 
@@ -13,9 +13,9 @@ var Module = fx.Provide(
 	NewHandler,
 )
 
-func NewHandler(cfg *config.Config) *FileUploadHandler {
+func NewHandler(s3c *s3.Client) *FileUploadHandler {
 	return &FileUploadHandler{
-		BaseDir: cfg.AssetsPath,
+		s3Client: s3c,
 	}
 }
 
