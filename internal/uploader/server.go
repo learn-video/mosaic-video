@@ -35,7 +35,7 @@ func (fu *FileUploadHandler) serveHTTPImpl(curFolderPath string, curFilePath str
 	if _, err := os.Stat(curFilePath); err == nil {
 		log.Printf("rewrite file %s @ %v \n", curFilePath, time.Now().Format(time.RFC3339))
 		data, _ := io.ReadAll(req.Body)
-		err = os.WriteFile(curFilePath, data, 0644)
+		err = os.WriteFile(curFilePath, data, 0o0644)
 		if err != nil {
 			log.Printf("fail to create file %v \n", err)
 		}

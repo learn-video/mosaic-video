@@ -15,29 +15,31 @@ func createPath(path string) error {
 	return os.MkdirAll(path, os.ModePerm)
 }
 
-func GenerateMosaic(mosaic mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
-	if err := createPath(cfg.AssetsPath + "/" + mosaic.Name); err != nil {
+func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
+	if err := createPath(cfg.AssetsPath + "/" + m.Name); err != nil {
 		return err
 	}
 
-	_, exists := runningProcesses[mosaic.Name]
+	_, exists := runningProcesses[m.Name]
 	if exists {
 		return nil
 	}
 
 	ctx := context.Background()
-	lock, err := locker.Obtain(ctx, mosaic.Name, 120*time.Second)
+	lock, err := locker.Obtain(ctx, m.Name, 120*time.Second)
 	if err != nil {
 		return err
 	}
 
-	args := command.Build(mosaic, cfg)
+	args := command.Build(m, cfg)
 	if err := cmdExecutor.Execute("ffmpeg", args...); err != nil {
-		lock.Release(ctx)
+		if err := lock.Release(ctx); err != nil {
+			return err
+		}
 		return err
 	}
 
-	runningProcesses[mosaic.Name] = true
+	runningProcesses[m.Name] = true
 
 	return nil
 }
