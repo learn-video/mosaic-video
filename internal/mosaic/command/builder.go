@@ -8,7 +8,6 @@ import (
 )
 
 func Build(m mosaic.Mosaic, cfg *config.Config) []string {
-	segmentPattern := fmt.Sprintf("hls/%s/seg_%%s.ts", m.Name)
 	playlistPath := fmt.Sprintf("hls/%s/playlist.m3u8", m.Name)
 
 	filterComplex := "nullsrc=size=1920x1080 [background];" +
@@ -37,7 +36,6 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 		"-hls_playlist_type", "event",
 		"-hls_time", "5",
 		"-strftime", "1",
-		"-hls_segment_filename", segmentPattern,
 		"-method", "PUT",
 		"-http_persistent", "1",
 		"-sc_threshold", "0",
