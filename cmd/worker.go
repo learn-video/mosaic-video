@@ -7,7 +7,6 @@ import (
 	"github.com/mauricioabreu/mosaic-video/internal/config"
 	"github.com/mauricioabreu/mosaic-video/internal/locking"
 	"github.com/mauricioabreu/mosaic-video/internal/logging"
-	"github.com/mauricioabreu/mosaic-video/internal/uploader"
 	"github.com/mauricioabreu/mosaic-video/internal/worker"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -24,12 +23,10 @@ func Work() *cobra.Command {
 
 			app := fx.New(
 				config.Module,
-				uploader.Module,
 				fx.Provide(
 					logging.NewLogger,
 					locking.NewRedisLocker,
 				),
-				fx.Invoke(uploader.Run),
 				fx.Invoke(worker.Run),
 			)
 
