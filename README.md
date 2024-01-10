@@ -29,7 +29,7 @@ Feel free to contribute to this project by opening issues or pull requests.
 
 `just lint` to run linters.
 
-`just deps` starts a mock API and Redis.
+`just deps` starts a mock API, Redis and S3 backend.
 
 `just run` starts the go process to generate mosaics.
 

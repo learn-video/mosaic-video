@@ -10,5 +10,8 @@ lint:
 deps:
     docker compose up
 
-run:
-    go run main.go
+worker:
+    go run main.go worker
+
+storage:
+    go run main.go storage
