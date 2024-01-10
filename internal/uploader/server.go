@@ -17,10 +17,12 @@ func (fu *FileUploadHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 	filename := req.URL.EscapedPath()[len("/hls"):]
 	vars := mux.Vars(req)
 	folder := vars["folder"]
-	fu.serveHTTPImpl(filename, folder, w, req)
+	fu.serveHTTPImpl(folder, filename, w, req)
 }
 
 func (fu *FileUploadHandler) serveHTTPImpl(folder, filename string, w http.ResponseWriter, req *http.Request) {
+	log.Printf("uploading file %s to folder %s", filename, folder)
+
 	data, err := io.ReadAll(req.Body)
 	if err != nil {
 		log.Printf("failed to read request body: %v", err)
