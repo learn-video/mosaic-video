@@ -14,12 +14,13 @@ It uses ffmpeg to capture the video and position them in a grid.
 
 * Generate mosaic from multiple video inputs;
 * Audio support (first video input);
-* Avaiable inputs: HLS.
+* Available inputs: HLS.
 
 ## Roadmap
 
 * Add support for RTMP inputs;
-* Add support to save the mosaics into storage.
+* Multiple audios;
+* Dynamic background image.
 
 ## Contributing
 
