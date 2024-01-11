@@ -1,6 +1,3 @@
-clean:
-    rm -r hls/*
-
 test:
     go test -v ./...
 

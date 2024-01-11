@@ -14,9 +14,9 @@ type FileUploadHandler struct {
 }
 
 func (fu *FileUploadHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	filename := req.URL.EscapedPath()[len("/hls"):]
 	vars := mux.Vars(req)
 	folder := vars["folder"]
+	filename := vars["filename"]
 	fu.serveHTTPImpl(folder, filename, w, req)
 }
 
