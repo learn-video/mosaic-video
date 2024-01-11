@@ -10,7 +10,6 @@ type Config struct {
 	API struct {
 		URL string
 	}
-	AssetsPath  string
 	StaticsPath string
 	S3          struct {
 		Endpoint        string
@@ -45,7 +44,6 @@ func NewConfig() *Config {
 			SecretAccessKey: os.Getenv("S3_SECRET_ACCESS_KEY"),
 			BucketName:      os.Getenv("S3_BUCKET_NAME"),
 		},
-		AssetsPath:  os.Getenv("ASSETS_PATH"),
 		StaticsPath: os.Getenv("STATICS_PATH"),
 	}
 }
