@@ -108,7 +108,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := command.Build(tt.mosaic, tt.cfg)
-			assert.ElementsMatch(t, tt.expectedArgs, args)
+			assert.Equal(t, tt.expectedArgs, args)
 		})
 	}
 }

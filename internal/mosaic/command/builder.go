@@ -26,6 +26,13 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 		"-i", m.Medias[1].URL,
 		"-filter_complex", filterComplex,
 		"-map", "[mosaico]",
+	}
+
+	if m.WithAudio {
+		args = append(args, "-map", "1:a")
+	}
+
+	args = append(args, []string{
 		"-c:v", "libx264",
 		"-x264opts", "keyint=30:min-keyint=30:scenecut=-1",
 		"-preset", "ultrafast",
@@ -41,11 +48,7 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 		"-http_persistent", "1",
 		"-sc_threshold", "0",
 		fmt.Sprintf("http://localhost:8080/%s", playlistPath),
-	}
-
-	if m.WithAudio {
-		args = append(args, "-map", "1:a")
-	}
+	}...)
 
 	return args
 }
