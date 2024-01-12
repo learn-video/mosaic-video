@@ -10,6 +10,14 @@ Generate mosaic videos from live inputs.
 
 It uses ffmpeg to capture the video and position them in a grid.
 
+## Design
+
+The project has two main components:
+* Worker: a Go process that receives the inputs and generates the mosaic;
+* Storage backend: HTTP server that receives the mosaic through HTTP and stores it on S3.
+
+![Mosaic Video design](docs/static/mosaic_design.png)
+
 ## Features
 
 * Generate mosaic from multiple video inputs;
