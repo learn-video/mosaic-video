@@ -16,7 +16,7 @@ func Store() *cobra.Command {
 		Use:   "storage",
 		Short: "Start backend to store mosaics",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := godotenv.Load(".env", ".penv"); err != nil {
+			if err := godotenv.Load(".env"); err != nil {
 				log.Println("Could not load .env file")
 			}
 
