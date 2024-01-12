@@ -10,8 +10,13 @@ type Config struct {
 	API struct {
 		URL string
 	}
-	AssetsPath  string
 	StaticsPath string
+	S3          struct {
+		Endpoint        string
+		AccessKeyID     string
+		SecretAccessKey string
+		BucketName      string
+	}
 }
 
 func NewConfig() *Config {
@@ -28,7 +33,17 @@ func NewConfig() *Config {
 		}{
 			URL: os.Getenv("MOSAICS_API_URL"),
 		},
-		AssetsPath:  os.Getenv("ASSETS_PATH"),
+		S3: struct {
+			Endpoint        string
+			AccessKeyID     string
+			SecretAccessKey string
+			BucketName      string
+		}{
+			Endpoint:        os.Getenv("S3_ENDPOINT"),
+			AccessKeyID:     os.Getenv("S3_ACCESS_KEY_ID"),
+			SecretAccessKey: os.Getenv("S3_SECRET_ACCESS_KEY"),
+			BucketName:      os.Getenv("S3_BUCKET_NAME"),
+		},
 		StaticsPath: os.Getenv("STATICS_PATH"),
 	}
 }

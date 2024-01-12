@@ -55,7 +55,6 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				"-hls_playlist_type", "event",
 				"-hls_time", "5",
 				"-strftime", "1",
-				"-hls_segment_filename", "hls/mosaicvideo/seg_%s.ts",
 				"-method", "PUT",
 				"-http_persistent", "1",
 				"-sc_threshold", "0",

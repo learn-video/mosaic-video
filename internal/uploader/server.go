@@ -4,53 +4,35 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
-	"path"
-	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/mauricioabreu/mosaic-video/internal/storage/s3"
 )
 
 type FileUploadHandler struct {
-	BaseDir string
+	s3Client *s3.Client
 }
 
 func (fu *FileUploadHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	curFileURL := req.URL.EscapedPath()[len("/hls"):]
 	vars := mux.Vars(req)
 	folder := vars["folder"]
-	curFolderPath := path.Join(fu.BaseDir, folder)
-	curFilePath := path.Join(fu.BaseDir, curFileURL)
-	fu.serveHTTPImpl(curFolderPath, curFilePath, w, req)
+	filename := vars["filename"]
+	fu.serveHTTPImpl(folder, filename, w, req)
 }
 
-func (fu *FileUploadHandler) serveHTTPImpl(curFolderPath string, curFilePath string, w http.ResponseWriter, req *http.Request) {
-	if _, err := os.Stat(curFolderPath); os.IsNotExist(err) {
-		err := os.MkdirAll(curFolderPath, os.ModePerm)
-		if err != nil {
-			log.Printf("fail to create file %v", err)
-		}
-	}
+func (fu *FileUploadHandler) serveHTTPImpl(folder, filename string, w http.ResponseWriter, req *http.Request) {
+	log.Printf("uploading file %s to folder %s", filename, folder)
 
-	if _, err := os.Stat(curFilePath); err == nil {
-		log.Printf("rewrite file %s @ %v \n", curFilePath, time.Now().Format(time.RFC3339))
-		data, _ := io.ReadAll(req.Body)
-		err = os.WriteFile(curFilePath, data, 0o0644)
-		if err != nil {
-			log.Printf("fail to create file %v \n", err)
-		}
+	data, err := io.ReadAll(req.Body)
+	if err != nil {
+		log.Printf("failed to read request body: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	f, rerr := os.Create(curFilePath)
-	if rerr != nil {
-		log.Printf("fail to create file %s : %v\n", curFilePath, rerr)
+	if err := fu.s3Client.Upload(filename, data); err != nil {
+		log.Printf("failed to upload file to storage: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
-	}
-	defer f.Close()
-
-	_, rerr = io.Copy(f, req.Body)
-	if rerr != nil {
-		log.Printf("fail to create file %v \n", rerr)
 	}
 }

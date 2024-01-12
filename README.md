@@ -10,16 +10,25 @@ Generate mosaic videos from live inputs.
 
 It uses ffmpeg to capture the video and position them in a grid.
 
+## Design
+
+The project has two main components:
+* Worker: a Go process that receives the inputs and generates the mosaic;
+* Storage backend: HTTP server that receives the mosaic through HTTP and stores it on S3.
+
+![Mosaic Video design](docs/static/mosaic_design.png)
+
 ## Features
 
 * Generate mosaic from multiple video inputs;
 * Audio support (first video input);
-* Avaiable inputs: HLS.
+* Available inputs: HLS.
 
 ## Roadmap
 
 * Add support for RTMP inputs;
-* Add support to save the mosaics into storage.
+* Multiple audios;
+* Dynamic background image.
 
 ## Contributing
 
@@ -29,7 +38,7 @@ Feel free to contribute to this project by opening issues or pull requests.
 
 `just lint` to run linters.
 
-`just deps` starts a mock API and Redis.
+`just deps` starts a mock API, Redis and S3 backend.
 
 `just run` starts the go process to generate mosaics.
 

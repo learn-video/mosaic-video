@@ -5,6 +5,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/storage"
 	"github.com/mauricioabreu/mosaic-video/internal/uploader"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -22,6 +23,7 @@ func Store() *cobra.Command {
 			app := fx.New(
 				config.Module,
 				uploader.Module,
+				storage.Module,
 				fx.Invoke(uploader.Run),
 			)
 

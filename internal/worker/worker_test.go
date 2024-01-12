@@ -22,7 +22,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 			{URL: "http://example.com/mosaicvideo_2.m3u8"},
 		},
 	}
-	cfg := &config.Config{AssetsPath: "output"}
+	cfg := &config.Config{}
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(nil, errors.New("error obtaining lock"))
 	runningProcesses := make(map[string]bool)
 
@@ -38,7 +38,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 }
 
 func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
-	cfg := &config.Config{AssetsPath: "output"}
+	cfg := &config.Config{}
 	ctrl := gomock.NewController(t)
 	locker := mocks.NewMockLocker(ctrl)
 	mosaic := mosaic.Mosaic{
