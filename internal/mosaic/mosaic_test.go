@@ -74,7 +74,6 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				WithAudio: false,
 			},
 			cfg: &config.Config{
-				AssetsPath:  "output",
 				StaticsPath: "statics",
 			},
 			expectedCmd: "ffmpeg",
