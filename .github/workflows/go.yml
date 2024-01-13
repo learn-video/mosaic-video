@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - uses: extractions/setup-just@v1
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -26,3 +27,9 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+      
+    - name: Just Test
+      run: just test
+      
+    - name: Just lint
+      run: just lint
