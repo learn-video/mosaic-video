@@ -2,6 +2,9 @@ package command
 
 import (
 	"fmt"
+	"log"
+	"strconv"
+	"strings"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
@@ -10,21 +13,45 @@ import (
 func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 	playlistPath := fmt.Sprintf("hls/%s/playlist.m3u8", m.Name)
 
-	filterComplex := "nullsrc=size=1920x1080 [background];" +
-		"[0:v] realtime, scale=1920x1080 [image];" +
-		"[1:v] setpts=PTS-STARTPTS, scale=1170x660 [v1];" +
-		"[2:v] setpts=PTS-STARTPTS, scale=568x320 [v2];" +
-		"[background][v1] overlay=shortest=0:x=84:y=40 [posv1];" +
-		"[posv1][v2] overlay=shortest=0:x=1260:y=40 [posv2];" +
-		"[image][posv2] overlay=shortest=0 [mosaico]"
+	var filterComplexBuilder strings.Builder
+	filterComplexBuilder.WriteString("nullsrc=size=1920x1080 [background];")
+	filterComplexBuilder.WriteString("[0:v] realtime, scale=1920x1080 [image];")
+
+	// Scale all videos
+	for i, media := range m.Medias {
+		var x, y int
+		_, err := fmt.Sscanf(media.Position, "%d_%d", &x, &y)
+		if err != nil {
+			log.Fatalf("Error parsing position: %v", err)
+		}
+
+		videoIndex := strconv.Itoa(i + 1)
+
+		// Scale each video and assign a label
+		filterComplexBuilder.WriteString(fmt.Sprintf("[%d:v] setpts=PTS-STARTPTS, scale=%s [v%s];", i+1, media.Scale, videoIndex))
+	}
+
+	// Then, overlay all videos
+	lastOverlay := "[background]"
+	for i := range m.Medias {
+		videoIndex := strconv.Itoa(i + 1)
+		var x, y int
+		fmt.Sscanf(m.Medias[i].Position, "%d_%d", &x, &y)
+
+		filterComplexBuilder.WriteString(fmt.Sprintf("%s[v%s] overlay=shortest=0:x=%d:y=%d [%s];", lastOverlay, videoIndex, x, y, "posv"+videoIndex))
+
+		lastOverlay = "[posv" + videoIndex + "]"
+	}
+
+	filterComplexBuilder.WriteString(fmt.Sprintf("[image]%s overlay=shortest=0 [mosaic]", lastOverlay))
 
 	args := []string{
 		"-loglevel", "error",
 		"-i", cfg.StaticsPath + "/background.jpg",
 		"-i", m.Medias[0].URL,
 		"-i", m.Medias[1].URL,
-		"-filter_complex", filterComplex,
-		"-map", "[mosaico]",
+		"-filter_complex", filterComplexBuilder.String(),
+		"-map", "[mosaic]",
 	}
 
 	if m.WithAudio {

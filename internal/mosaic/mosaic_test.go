@@ -28,8 +28,8 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			mosaic: mosaic.Mosaic{
 				Name: "mosaicvideo",
 				Medias: []mosaic.Media{
-					{URL: "http://example.com/mosaicvideo_1.m3u8"},
-					{URL: "http://example.com/mosaicvideo_2.m3u8"},
+					{URL: "http://example.com/mosaicvideo_1.m3u8", Position: "84_40", Scale: "1170x660"},
+					{URL: "http://example.com/mosaicvideo_2.m3u8", Position: "1260_40", Scale: "568x320"},
 				},
 				WithAudio: true,
 			},
@@ -43,8 +43,8 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				"-i", "statics/background.jpg",
 				"-i", "http://example.com/mosaicvideo_1.m3u8",
 				"-i", "http://example.com/mosaicvideo_2.m3u8",
-				"-filter_complex", `nullsrc=size=1920x1080 [background];[0:v] realtime, scale=1920x1080 [image];[1:v] setpts=PTS-STARTPTS, scale=1170x660 [v1];[2:v] setpts=PTS-STARTPTS, scale=568x320 [v2];[background][v1] overlay=shortest=0:x=84:y=40 [posv1];[posv1][v2] overlay=shortest=0:x=1260:y=40 [posv2];[image][posv2] overlay=shortest=0 [mosaico]`,
-				"-map", "[mosaico]",
+				"-filter_complex", `nullsrc=size=1920x1080 [background];[0:v] realtime, scale=1920x1080 [image];[1:v] setpts=PTS-STARTPTS, scale=1170x660 [v1];[2:v] setpts=PTS-STARTPTS, scale=568x320 [v2];[background][v1] overlay=shortest=0:x=84:y=40 [posv1];[posv1][v2] overlay=shortest=0:x=1260:y=40 [posv2];[image][posv2] overlay=shortest=0 [mosaic]`,
+				"-map", "[mosaic]",
 				"-map", "1:a",
 				"-c:v", "libx264",
 				"-x264opts", "keyint=30:min-keyint=30:scenecut=-1",
@@ -69,8 +69,8 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			mosaic: mosaic.Mosaic{
 				Name: "mosaicvideo",
 				Medias: []mosaic.Media{
-					{URL: "http://example.com/mosaicvideo_1.m3u8"},
-					{URL: "http://example.com/mosaicvideo_2.m3u8"},
+					{URL: "http://example.com/mosaicvideo_1.m3u8", Position: "84_40", Scale: "1170x660"},
+					{URL: "http://example.com/mosaicvideo_2.m3u8", Position: "1260_40", Scale: "568x320"},
 				},
 				WithAudio: false,
 			},
@@ -84,8 +84,8 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				"-i", "statics/background.jpg",
 				"-i", "http://example.com/mosaicvideo_1.m3u8",
 				"-i", "http://example.com/mosaicvideo_2.m3u8",
-				"-filter_complex", `nullsrc=size=1920x1080 [background];[0:v] realtime, scale=1920x1080 [image];[1:v] setpts=PTS-STARTPTS, scale=1170x660 [v1];[2:v] setpts=PTS-STARTPTS, scale=568x320 [v2];[background][v1] overlay=shortest=0:x=84:y=40 [posv1];[posv1][v2] overlay=shortest=0:x=1260:y=40 [posv2];[image][posv2] overlay=shortest=0 [mosaico]`,
-				"-map", "[mosaico]",
+				"-filter_complex", `nullsrc=size=1920x1080 [background];[0:v] realtime, scale=1920x1080 [image];[1:v] setpts=PTS-STARTPTS, scale=1170x660 [v1];[2:v] setpts=PTS-STARTPTS, scale=568x320 [v2];[background][v1] overlay=shortest=0:x=84:y=40 [posv1];[posv1][v2] overlay=shortest=0:x=1260:y=40 [posv2];[image][posv2] overlay=shortest=0 [mosaic]`,
+				"-map", "[mosaic]",
 				"-c:v", "libx264",
 				"-x264opts", "keyint=30:min-keyint=30:scenecut=-1",
 				"-preset", "ultrafast",

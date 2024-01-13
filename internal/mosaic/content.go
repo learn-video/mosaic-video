@@ -7,7 +7,9 @@ import (
 
 type (
 	Media struct {
-		URL string `json:"url"`
+		URL      string `json:"url"`
+		Position string
+		Scale    string
 	}
 
 	Mosaic struct {
