@@ -31,9 +31,7 @@ The project has two main components:
 * Multiple audios;
 * Dynamic background image.
 
-## Contributing
-
-Feel free to contribute to this project by opening issues or pull requests.
+## Running and tests
 
 `just test` to run the tests.
 
@@ -41,14 +39,16 @@ Feel free to contribute to this project by opening issues or pull requests.
 
 `just deps` starts a mock API, Redis and S3 backend.
 
-`just run` starts the go process to generate mosaics.
+`just worker` starts the go process to generate mosaics.
+
+`just storage` startes the uploader component.
+
+`just player` starts the HLS player.
 
 ## Installation
 
-We are still working on the installation process. For now, you can install it by cloning the repository and running `go run main.go`.
+We are still working on the installation process. For now, you can install it by cloning the repository and running separately the components (see "Running and tests" section).
 
 ## Contributing
 
 Feel free to contribute to this project by opening issues or pull requests.
-
-`just test` to run the tests.
