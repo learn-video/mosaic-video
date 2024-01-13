@@ -1,6 +1,7 @@
 [
     {
         "name": "mosaic",
+        "backgroundUrl": "https://i.ibb.co/ZVNYHJf/background.jpg",
         "medias": [
             {
                 "url": "https://rtvelivestream.akamaized.net/rtvesec/24h/24h_main_720.m3u8",

@@ -26,7 +26,8 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			name:    "Multiple URLs with audio",
 			key:     "mosaicvideo",
 			mosaic: mosaic.Mosaic{
-				Name: "mosaicvideo",
+				Name:          "mosaicvideo",
+				BackgroundUrl: "http://example.com/background.jpg",
 				Medias: []mosaic.Media{
 					{
 						URL: "http://example.com/mosaicvideo_1.m3u8",
@@ -53,7 +54,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
 				"-loglevel", "error",
-				"-i", "statics/background.jpg",
+				"-i", "http://example.com/background.jpg",
 				"-i", "http://example.com/mosaicvideo_1.m3u8",
 				"-i", "http://example.com/mosaicvideo_2.m3u8",
 				"-filter_complex", `nullsrc=size=1920x1080 [background];[0:v] realtime, scale=1920x1080 [image];[1:v] setpts=PTS-STARTPTS, scale=1170x660 [v1];[2:v] setpts=PTS-STARTPTS, scale=568x320 [v2];[background][v1] overlay=shortest=0:x=84:y=40 [posv1];[posv1][v2] overlay=shortest=0:x=1260:y=40 [posv2];[image][posv2] overlay=shortest=0 [mosaic]`,
@@ -80,7 +81,8 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			name:    "Multiple URLs without audio",
 			key:     "mosaicvideo",
 			mosaic: mosaic.Mosaic{
-				Name: "mosaicvideo",
+				Name:          "mosaicvideo",
+				BackgroundUrl: "http://example.com/background.jpg",
 				Medias: []mosaic.Media{
 					{
 						URL: "http://example.com/mosaicvideo_1.m3u8",
@@ -107,7 +109,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
 				"-loglevel", "error",
-				"-i", "statics/background.jpg",
+				"-i", "http://example.com/background.jpg",
 				"-i", "http://example.com/mosaicvideo_1.m3u8",
 				"-i", "http://example.com/mosaicvideo_2.m3u8",
 				"-filter_complex", `nullsrc=size=1920x1080 [background];[0:v] realtime, scale=1920x1080 [image];[1:v] setpts=PTS-STARTPTS, scale=1170x660 [v1];[2:v] setpts=PTS-STARTPTS, scale=568x320 [v2];[background][v1] overlay=shortest=0:x=84:y=40 [posv1];[posv1][v2] overlay=shortest=0:x=1260:y=40 [posv2];[image][posv2] overlay=shortest=0 [mosaic]`,
