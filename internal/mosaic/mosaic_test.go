@@ -34,7 +34,8 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				WithAudio: true,
 			},
 			cfg: &config.Config{
-				StaticsPath: "statics",
+				StaticsPath:      "statics",
+				UploaderEndpoint: "http://localhost:8080",
 			},
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
@@ -74,7 +75,8 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				WithAudio: false,
 			},
 			cfg: &config.Config{
-				StaticsPath: "statics",
+				StaticsPath:      "statics",
+				UploaderEndpoint: "http://localhost:8080",
 			},
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
