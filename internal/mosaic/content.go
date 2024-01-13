@@ -17,9 +17,10 @@ type (
 	}
 
 	Mosaic struct {
-		Name      string  `json:"name"`
-		Medias    []Media `json:"medias"`
-		WithAudio bool    `json:"with_audio"`
+		Name          string  `json:"name"`
+		BackgroundUrl string  `json:"backgroundUrl"`
+		Medias        []Media `json:"medias"`
+		WithAudio     bool    `json:"with_audio"`
 	}
 )
 
