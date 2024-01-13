@@ -6,9 +6,13 @@ import (
 )
 
 type (
+	Position struct {
+		X int
+		Y int
+	}
 	Media struct {
 		URL      string `json:"url"`
-		Position string
+		Position Position
 		Scale    string
 	}
 

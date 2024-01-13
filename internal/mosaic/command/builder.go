@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -19,12 +18,6 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 
 	// Scale all videos
 	for i, media := range m.Medias {
-		var x, y int
-		_, err := fmt.Sscanf(media.Position, "%d_%d", &x, &y)
-		if err != nil {
-			log.Fatalf("Error parsing position: %v", err)
-		}
-
 		videoIndex := strconv.Itoa(i + 1)
 
 		// Scale each video and assign a label
@@ -35,8 +28,8 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 	lastOverlay := "[background]"
 	for i := range m.Medias {
 		videoIndex := strconv.Itoa(i + 1)
-		var x, y int
-		fmt.Sscanf(m.Medias[i].Position, "%d_%d", &x, &y)
+
+		x, y := m.Medias[i].Position.X, m.Medias[i].Position.Y
 
 		filterComplexBuilder.WriteString(fmt.Sprintf("%s[v%s] overlay=shortest=0:x=%d:y=%d [%s];", lastOverlay, videoIndex, x, y, "posv"+videoIndex))
 

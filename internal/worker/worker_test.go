@@ -44,8 +44,21 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
 		Medias: []mosaic.Media{
-			{URL: "http://example.com/mosaicvideo_1.m3u8", Position: "84_40", Scale: "1170x660"},
-			{URL: "http://example.com/mosaicvideo_2.m3u8", Position: "1260_40", Scale: "568x320"},
+			{
+				URL: "http://example.com/mosaicvideo_1.m3u8",
+				Position: mosaic.Position{
+					X: 84,
+					Y: 40,
+				},
+				Scale: "1170x660"},
+			{
+				URL: "http://example.com/mosaicvideo_2.m3u8",
+				Position: mosaic.Position{
+					X: 1260,
+					Y: 40,
+				},
+				Scale: "568x320",
+			},
 		},
 	}
 	lock := mocks.NewMockLock(ctrl)

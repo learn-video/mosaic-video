@@ -4,12 +4,18 @@
         "medias": [
             {
                 "url": "https://rtvelivestream.akamaized.net/rtvesec/24h/24h_main_720.m3u8",
-                "position": "0_0",
+                "position": {
+                    "x": 0,
+                    "y": 0
+                },
                 "scale": "1170x660"
             },
             {
                 "url": "https://canadaremar2.todostreaming.es/live/peque-pequetv.m3u8",
-                "position": "1200_0",
+                "position": {
+                    "x": 1200,
+                    "y": 0
+                },
                 "scale": "568x320"
             }
         ],
