@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="//cdn.jsdelivr.net/npm/hls.js@latest"></script>
+	<style>
+		.container {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+		.video {
+			width: 90vw;
+            height: 90vh;
+		}
+	</style>
+</head>
+<body>
+	<div class="container" id="videoContainer">
+		<video class="video" id="video" controls></video>
+	</div>
+
+	<script>
+        const video = document.getElementById('video');
+        const playlistUrl = 'http://localhost:8090/playlist/playlist.m3u8';
+
+        if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+            console.log('video and hls.js are now bound together !');
+            });
+            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+            console.log(
+                'manifest loaded, found ' + data.levels.length + ' quality level',
+            );
+            });
+            hls.loadSource(playlistUrl);
+            hls.attachMedia(video);
+        }
+    </script>
+</body>
+</html>

@@ -3,6 +3,7 @@ package s3
 import (
 	"bytes"
 	"context"
+	"io"
 	"path/filepath"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -39,6 +40,19 @@ func (s3c *Client) Upload(filename string, data []byte) error {
 		minio.PutObjectOptions{ContentType: getMIMEType(filename)},
 	)
 	return err
+}
+
+func (s3c *Client) Get(filename string) (io.Reader, error) {
+	output, err := s3c.client.GetObject(
+		context.Background(),
+		s3c.bucketName,
+		filename,
+		minio.GetObjectOptions{},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
 }
 
 func getMIMEType(path string) string {

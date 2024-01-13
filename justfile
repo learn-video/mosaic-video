@@ -12,3 +12,6 @@ worker:
 
 storage:
     go run main.go storage
+
+player:
+    go run main.go player
