@@ -17,6 +17,7 @@ type Config struct {
 		SecretAccessKey string
 		BucketName      string
 	}
+	UploaderEndpoint string
 }
 
 func NewConfig() *Config {
@@ -44,6 +45,7 @@ func NewConfig() *Config {
 			SecretAccessKey: os.Getenv("S3_SECRET_ACCESS_KEY"),
 			BucketName:      os.Getenv("S3_BUCKET_NAME"),
 		},
-		StaticsPath: os.Getenv("STATICS_PATH"),
+		StaticsPath:      os.Getenv("STATICS_PATH"),
+		UploaderEndpoint: os.Getenv("UPLOADER_ENDPOINT"),
 	}
 }

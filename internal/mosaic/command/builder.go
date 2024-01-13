@@ -45,7 +45,7 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 		"-method", "PUT",
 		"-http_persistent", "1",
 		"-sc_threshold", "0",
-		fmt.Sprintf("http://localhost:8080/%s", playlistPath),
+		fmt.Sprintf("%s/%s", cfg.UploaderEndpoint, playlistPath),
 	}...)
 
 	return args
