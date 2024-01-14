@@ -29,7 +29,7 @@ func (h *HlsManifestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 	manifest := make([]Manifest, len(tasks))
 	for i, m := range tasks {
 		manifest[i].Name = m.Name
-		manifest[i].PlaylistUrl = fmt.Sprintf("%s/playlist/playlist-%s.m3u8", h.cfg.PlayerEndpoint, m.Name)
+		manifest[i].PlaylistURL = fmt.Sprintf("%s/playlist/playlist-%s.m3u8", h.cfg.PlayerEndpoint, m.Name)
 	}
 
 	output, err := json.Marshal(&manifest)
