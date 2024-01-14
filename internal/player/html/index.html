@@ -9,32 +9,74 @@
 			justify-content: center;
 		}
 		.video {
-			width: 90vw;
-            height: 90vh;
+			width: 80vw;
+            height: 80vh;
 		}
 	</style>
 </head>
 <body>
-	<div class="container" id="videoContainer">
-		<video class="video" id="video" controls></video>
-	</div>
+    <div class="container">Select a mosaic:</div>
+    <div class="container" id="optionsContainer" style="padding: 10px;"></div>
+	<div class="container" id="videoContainer"></div>
 
 	<script>
-        const video = document.getElementById('video');
-        const playlistUrl = 'http://localhost:8090/playlist/playlist.m3u8';
+        const videoContainer = document.getElementById('videoContainer');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const manifestUrl = 'http://localhost:8090/manifest';
+        let showOnlyFirstMosaic = true
 
         if (Hls.isSupported()) {
-            var hls = new Hls();
-            hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-            console.log('video and hls.js are now bound together !');
+            fetch(manifestUrl)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item => {
+                    const videoId = 'video:' + item.name
+                    createButtonOption(item.name, videoId)
+
+                    const video = document.createElement('video');
+                    video.id = videoId
+                    video.className = 'video';
+                    video.controls = true;
+
+                    if (showOnlyFirstMosaic === true) {
+                        video.style = 'display: block;'
+                        showOnlyFirstMosaic = false
+                    } else {
+                        video.style = 'display: none;'
+                    }
+
+                    const hls = new Hls();
+                    hls.loadSource(item.playlist_url);
+                    hls.attachMedia(video);
+                    
+                    videoContainer.appendChild(video);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao obter a playlist:', error);
             });
-            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-            console.log(
-                'manifest loaded, found ' + data.levels.length + ' quality level',
-            );
-            });
-            hls.loadSource(playlistUrl);
-            hls.attachMedia(video);
+        }
+
+        function createButtonOption(name, videoId) {
+            const button = document.createElement('button')
+            button.textContent = name
+            button.style = 'margin: 10px;'
+            button.addEventListener('click', () => {
+                showMosaic(videoId)
+            })
+            optionsContainer.appendChild(button)
+        }
+
+        function showMosaic(videoId) {
+            var videos = document.getElementById('videoContainer').children;
+            for (let index = 0; index < videos.length; index++) {
+                const video = document.getElementById(videos[index].id)
+                video.style = 'display: none;'
+                video.pause()
+            }
+            const video = document.getElementById(videoId)
+            video.style = 'display: block;'
+            video.play()
         }
     </script>
 </body>
