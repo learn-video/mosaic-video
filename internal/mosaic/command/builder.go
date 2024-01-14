@@ -40,7 +40,7 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 
 	args := []string{
 		"-loglevel", "error",
-		"-i", m.BackgroundUrl,
+		"-i", m.BackgroundURL,
 		"-i", m.Medias[0].URL,
 		"-i", m.Medias[1].URL,
 		"-filter_complex", filterComplexBuilder.String(),
