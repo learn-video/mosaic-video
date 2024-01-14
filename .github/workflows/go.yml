@@ -15,14 +15,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-
+    
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
+        cache: false
 
+    - uses: extractions/setup-just@v1
+        
     - name: Build
       run: go build -v ./...
 
     - name: Test
       run: go test -v ./...
+      
+    - name: Just Test
+      run: just test
