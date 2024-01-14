@@ -22,14 +22,14 @@ The project has two main components:
 
 * Generate mosaic from multiple video inputs;
 * Audio support (first video input);
-* Available inputs: HLS;
+* Available inputs: HLS and RTMP;
+* Available outputs: HLS;
 * A simple HLS Player available in: http://localhost:8090/player;
 * Dynamic scaling/positioning of the inputs;
 * Dynamic background for each mosaic.
 
 ## Roadmap
 
-* Add support for RTMP inputs;
 * Multiple audios.
 
 ## Running and tests
