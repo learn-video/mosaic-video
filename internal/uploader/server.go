@@ -1,6 +1,7 @@
 package uploader
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 
@@ -39,7 +40,9 @@ func (fu *FileUploadHandler) serveHTTPImpl(folder, filename string, w http.Respo
 		return
 	}
 
-	if err := fu.s3Client.Upload(filename, data); err != nil {
+	filepath := fmt.Sprintf("%s/%s", folder, filename)
+
+	if err := fu.s3Client.Upload(filepath, data); err != nil {
 		fu.logger.Errorf("failed to upload file to storage: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 
