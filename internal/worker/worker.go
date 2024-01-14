@@ -17,7 +17,7 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 	}
 
 	ctx := context.Background()
-	lock, err := locker.Obtain(ctx, m.Name, 30*time.Second)
+	lock, err := locker.Obtain(ctx, m.Name, 120*time.Second)
 	if err != nil {
 		return err
 	}
