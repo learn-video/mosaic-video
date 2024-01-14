@@ -27,7 +27,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			key:     "mosaicvideo",
 			mosaic: mosaic.Mosaic{
 				Name:          "mosaicvideo",
-				BackgroundUrl: "http://example.com/background.jpg",
+				BackgroundURL: "http://example.com/background.jpg",
 				Medias: []mosaic.Media{
 					{
 						URL: "http://example.com/mosaicvideo_1.m3u8",
@@ -82,7 +82,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 			key:     "mosaicvideo",
 			mosaic: mosaic.Mosaic{
 				Name:          "mosaicvideo",
-				BackgroundUrl: "http://example.com/background.jpg",
+				BackgroundURL: "http://example.com/background.jpg",
 				Medias: []mosaic.Media{
 					{
 						URL: "http://example.com/mosaicvideo_1.m3u8",

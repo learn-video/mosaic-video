@@ -20,9 +20,12 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
+        cache: false
+
+    - uses: extractions/setup-just@v1
 
     - name: Build
       run: go build -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: just test

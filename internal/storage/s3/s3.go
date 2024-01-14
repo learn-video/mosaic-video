@@ -39,6 +39,7 @@ func (s3c *Client) Upload(filename string, data []byte) error {
 		int64(len(data)),
 		minio.PutObjectOptions{ContentType: getMIMEType(filename)},
 	)
+
 	return err
 }
 
@@ -49,9 +50,11 @@ func (s3c *Client) Get(filename string) (io.Reader, error) {
 		filename,
 		minio.GetObjectOptions{},
 	)
+
 	if err != nil {
 		return nil, err
 	}
+
 	return output, nil
 }
 

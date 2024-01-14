@@ -18,7 +18,7 @@ type (
 
 	Mosaic struct {
 		Name          string  `json:"name"`
-		BackgroundUrl string  `json:"background_url"`
+		BackgroundURL string  `json:"background_url"`
 		Medias        []Media `json:"medias"`
 		WithAudio     bool    `json:"with_audio"`
 	}
@@ -33,6 +33,7 @@ func FetchMosaicTasks(apiURL string) ([]Mosaic, error) {
 	defer resp.Body.Close()
 
 	var tasks []Mosaic
+
 	if err := json.NewDecoder(resp.Body).Decode(&tasks); err != nil {
 		return nil, err
 	}

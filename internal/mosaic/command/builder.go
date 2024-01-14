@@ -13,6 +13,7 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 	playlistPath := fmt.Sprintf("hls/%s/playlist-%s.m3u8", m.Name, m.Name)
 
 	var filterComplexBuilder strings.Builder
+
 	filterComplexBuilder.WriteString("nullsrc=size=1920x1080 [background];")
 	filterComplexBuilder.WriteString("[0:v] realtime, scale=1920x1080 [image];")
 
@@ -26,6 +27,7 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 
 	// Then, overlay all videos
 	lastOverlay := "[background]"
+
 	for i := range m.Medias {
 		videoIndex := strconv.Itoa(i + 1)
 
