@@ -50,7 +50,7 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 
 	args := []string{
 		"-loglevel", "error",
-		"-i", m.BackgroundUrl,
+		"-i", m.BackgroundURL,
 	}
 
 	args = append(args, videoInputs...)
