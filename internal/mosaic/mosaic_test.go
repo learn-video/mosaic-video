@@ -73,7 +73,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				"-method", "PUT",
 				"-http_persistent", "1",
 				"-sc_threshold", "0",
-				"http://localhost:8080/hls/mosaicvideo/playlist.m3u8",
+				"http://localhost:8080/hls/mosaicvideo/playlist-mosaicvideo.m3u8",
 			},
 		},
 		{
@@ -127,7 +127,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				"-method", "PUT",
 				"-http_persistent", "1",
 				"-sc_threshold", "0",
-				"http://localhost:8080/hls/mosaicvideo/playlist.m3u8",
+				"http://localhost:8080/hls/mosaicvideo/playlist-mosaicvideo.m3u8",
 			},
 		},
 	}
