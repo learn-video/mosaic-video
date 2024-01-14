@@ -25,8 +25,8 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 
 	args := command.Build(m, cfg)
 	if err := cmdExecutor.Execute("ffmpeg", args...); err != nil {
-		if err := lock.Release(ctx); err != nil {
-			return err
+		if lerr := lock.Release(ctx); lerr != nil {
+			return lerr
 		}
 
 		return err
