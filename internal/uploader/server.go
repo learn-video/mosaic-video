@@ -27,12 +27,14 @@ func (fu *FileUploadHandler) serveHTTPImpl(folder, filename string, w http.Respo
 	if err != nil {
 		log.Printf("failed to read request body: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
+
 		return
 	}
 
 	if err := fu.s3Client.Upload(filename, data); err != nil {
 		log.Printf("failed to upload file to storage: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
+
 		return
 	}
 }
