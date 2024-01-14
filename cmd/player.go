@@ -5,6 +5,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/logging"
 	"github.com/mauricioabreu/mosaic-video/internal/player"
 	"github.com/mauricioabreu/mosaic-video/internal/storage"
 	"github.com/spf13/cobra"
@@ -24,6 +25,7 @@ func Player() *cobra.Command {
 				config.Module,
 				storage.Module,
 				fx.Provide(
+					logging.NewLogger,
 					player.NewHlsPlaylistHandler,
 					player.NewHlsPlayerHandler,
 				),
