@@ -25,7 +25,6 @@ func Player() *cobra.Command {
 				storage.Module,
 				fx.Provide(
 					player.NewHlsPlaylistHandler,
-					player.NewHlsFragmentHandler,
 					player.NewHlsPlayerHandler,
 				),
 				fx.Invoke(player.Run),
