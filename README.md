@@ -24,11 +24,11 @@ The project has two main components:
 * Audio support (first video input);
 * Available inputs: HLS;
 * A simple HLS Player available in: http://localhost:8090/player;
-* Dynamic scaling/positioning of the inputs.
+* Dynamic scaling/positioning of the inputs;
+* Support for RTMP inputs.
 
 ## Roadmap
 
-* Add support for RTMP inputs;
 * Multiple audios;
 * Dynamic background image.
 
