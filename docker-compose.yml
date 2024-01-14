@@ -33,6 +33,13 @@ services:
       - MINIO_ROOT_USER=mosaic
       - MINIO_ROOT_PASSWORD=mosaic#123
     command: server --console-address ":9001" /data
+  rtmp:
+    build: ./rtmp/.
+    container_name: rtmp
+    volumes:
+      - ./rtmp/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 1935:1935
 
 volumes:
   s3_storage: {}
