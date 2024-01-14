@@ -18,6 +18,7 @@ type Config struct {
 		BucketName      string
 	}
 	UploaderEndpoint string
+	PlayerEndpoint   string
 }
 
 func NewConfig() *Config {
@@ -47,5 +48,6 @@ func NewConfig() *Config {
 		},
 		StaticsPath:      os.Getenv("STATICS_PATH"),
 		UploaderEndpoint: os.Getenv("UPLOADER_ENDPOINT"),
+		PlayerEndpoint:   os.Getenv("PLAYER_ENDPOINT"),
 	}
 }
