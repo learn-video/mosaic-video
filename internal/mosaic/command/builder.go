@@ -40,14 +40,25 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 
 	filterComplexBuilder.WriteString(fmt.Sprintf("[image]%s overlay=shortest=0 [mosaic]", lastOverlay))
 
+	videoInputs := []string{}
+	for _, m := range m.Medias {
+		videoInputs = append(
+			videoInputs,
+			"-i", m.URL,
+		)
+	}
+
 	args := []string{
 		"-loglevel", "error",
 		"-i", m.BackgroundURL,
-		"-i", m.Medias[0].URL,
-		"-i", m.Medias[1].URL,
+	}
+
+	args = append(args, videoInputs...)
+
+	args = append(args, []string{
 		"-filter_complex", filterComplexBuilder.String(),
 		"-map", "[mosaic]",
-	}
+	}...)
 
 	if m.WithAudio {
 		args = append(args, "-map", "1:a")
