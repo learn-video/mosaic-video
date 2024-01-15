@@ -6,19 +6,19 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/mauricioabreu/mosaic-video/internal/storage/s3"
+	"github.com/mauricioabreu/mosaic-video/internal/storage"
 	"go.uber.org/zap"
 )
 
 type HlsPlaylistHandler struct {
-	s3Client *s3.Client
-	logger   *zap.SugaredLogger
+	storageHandler storage.Storage
+	logger         *zap.SugaredLogger
 }
 
-func NewHlsPlaylistHandler(s3c *s3.Client, logger *zap.SugaredLogger) *HlsPlaylistHandler {
+func NewHlsPlaylistHandler(s storage.Storage, logger *zap.SugaredLogger) *HlsPlaylistHandler {
 	return &HlsPlaylistHandler{
-		s3Client: s3c,
-		logger:   logger,
+		storageHandler: s,
+		logger:         logger,
 	}
 }
 
@@ -31,7 +31,7 @@ func (hh *HlsPlaylistHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 
 func (hh *HlsPlaylistHandler) servePlaylistHTTPImpl(folder string, filename string, w http.ResponseWriter, req *http.Request) {
 	file := fmt.Sprintf("%s/%s", folder, filename)
-	content, err := hh.s3Client.Get(file)
+	content, err := hh.storageHandler.Get(file)
 	if err != nil {
 		hh.logger.Errorf("failed to get %s file from bucket, err: %v", file, err)
 		w.WriteHeader(http.StatusBadRequest)
