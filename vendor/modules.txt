@@ -87,6 +87,8 @@ github.com/spf13/pflag
 # github.com/stretchr/testify v1.8.4
 ## explicit; go 1.20
 github.com/stretchr/testify/assert
+github.com/stretchr/testify/require
+github.com/stretchr/testify/suite
 # go.uber.org/dig v1.17.0
 ## explicit; go 1.18
 go.uber.org/dig

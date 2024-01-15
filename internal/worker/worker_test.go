@@ -14,6 +14,8 @@ import (
 
 func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	locker := mocks.NewMockLocker(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
@@ -38,8 +40,10 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 }
 
 func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
-	cfg := &config.Config{}
 	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	cfg := &config.Config{}
 	locker := mocks.NewMockLocker(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",

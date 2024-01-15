@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/mauricioabreu/mosaic-video/internal/config"
 	"github.com/mauricioabreu/mosaic-video/internal/logging"
+	"github.com/mauricioabreu/mosaic-video/internal/storage"
 	"github.com/mauricioabreu/mosaic-video/internal/storage/s3"
 	"github.com/mauricioabreu/mosaic-video/internal/uploader"
 	"github.com/spf13/cobra"
@@ -26,7 +27,10 @@ func Store() *cobra.Command {
 					config.NewConfig,
 					logging.NewLogger,
 					uploader.NewHandler,
-					s3.NewClient,
+					fx.Annotate(
+						s3.NewClient,
+						fx.As(new(storage.Storage)),
+					),
 				),
 				fx.Invoke(uploader.Run),
 			)

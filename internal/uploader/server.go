@@ -6,19 +6,19 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/mauricioabreu/mosaic-video/internal/storage/s3"
+	"github.com/mauricioabreu/mosaic-video/internal/storage"
 	"go.uber.org/zap"
 )
 
 type FileUploadHandler struct {
-	s3Client *s3.Client
-	logger   *zap.SugaredLogger
+	storageHandler storage.Storage
+	logger         *zap.SugaredLogger
 }
 
-func NewHandler(s3c *s3.Client, logger *zap.SugaredLogger) *FileUploadHandler {
+func NewHandler(s storage.Storage, logger *zap.SugaredLogger) *FileUploadHandler {
 	return &FileUploadHandler{
-		s3Client: s3c,
-		logger:   logger,
+		storageHandler: s,
+		logger:         logger,
 	}
 }
 
@@ -42,12 +42,13 @@ func (fu *FileUploadHandler) serveHTTPImpl(folder, filename string, w http.Respo
 
 	filepath := fmt.Sprintf("%s/%s", folder, filename)
 
-	if err := fu.s3Client.Upload(filepath, data); err != nil {
+	if err := fu.storageHandler.Upload(filepath, data); err != nil {
 		fu.logger.Errorf("failed to upload file to storage: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	fu.logger.Infof("file %s uploaded to folder %s", filename, folder)
 }
