@@ -26,11 +26,11 @@ func Store() *cobra.Command {
 				fx.Provide(
 					config.NewConfig,
 					logging.NewLogger,
-					uploader.NewHandler,
 					fx.Annotate(
 						s3.NewClient,
 						fx.As(new(storage.Storage)),
 					),
+					uploader.NewHandler,
 				),
 				fx.Invoke(uploader.Run),
 			)
