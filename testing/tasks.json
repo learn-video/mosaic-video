@@ -20,6 +20,6 @@
                 "scale": "568x320"
             }
         ],
-        "with_audio": true
+        "audio": "first_input"
     }
 ]
