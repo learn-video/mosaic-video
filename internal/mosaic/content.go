@@ -5,6 +5,26 @@ import (
 	"net/http"
 )
 
+type Audio string
+
+const (
+	NoAudio    Audio = "no_audio"
+	FirstInput Audio = "first_input"
+	AllInputs  Audio = "all_inputs"
+)
+
+func (a Audio) IsNoAudio() bool {
+	return a == Audio(NoAudio)
+}
+
+func (a Audio) IsFirstInput() bool {
+	return a == Audio(FirstInput)
+}
+
+func (a Audio) IsAllInputs() bool {
+	return a == Audio(AllInputs)
+}
+
 type (
 	Position struct {
 		X int
@@ -20,7 +40,7 @@ type (
 		Name          string  `json:"name"`
 		BackgroundURL string  `json:"background_url"`
 		Medias        []Media `json:"medias"`
-		WithAudio     bool    `json:"with_audio"`
+		Audio         Audio   `json:"audio"`
 	}
 )
 

@@ -42,13 +42,23 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 
 	videoInputs := []string{}
 	audioInputs := []string{}
-	for i, media := range m.Medias {
+
+	for _, media := range m.Medias {
 		videoInputs = append(
 			videoInputs,
 			"-i", media.URL,
 		)
+	}
 
-		if m.WithAudio {
+	if m.Audio.IsFirstInput() {
+		audioInputs = append(
+			audioInputs,
+			"-map", "1:a?",
+		)
+	}
+
+	if m.Audio.IsAllInputs() {
+		for i := range m.Medias {
 			audioInputs = append(
 				audioInputs,
 				"-map", fmt.Sprintf("%d:a?", i+1),
