@@ -14,15 +14,15 @@ const (
 )
 
 func (a Audio) IsNoAudio() bool {
-	return a == Audio(NoAudio)
+	return a == NoAudio
 }
 
 func (a Audio) IsFirstInput() bool {
-	return a == Audio(FirstInput)
+	return a == FirstInput
 }
 
 func (a Audio) IsAllInputs() bool {
-	return a == Audio(AllInputs)
+	return a == AllInputs
 }
 
 type (
