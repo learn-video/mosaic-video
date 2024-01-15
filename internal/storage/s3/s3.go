@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/storage"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
@@ -16,7 +17,7 @@ type Client struct {
 	bucketName string
 }
 
-func NewClient(cfg *config.Config) (*Client, error) {
+func NewClient(cfg *config.Config) (storage.Storage, error) {
 	client, err := minio.New(cfg.S3.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(cfg.S3.AccessKeyID, cfg.S3.SecretAccessKey, ""),
 		Secure: false,
