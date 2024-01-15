@@ -22,8 +22,8 @@ func Work() *cobra.Command {
 			}
 
 			app := fx.New(
-				config.Module,
 				fx.Provide(
+					config.NewConfig,
 					logging.NewLogger,
 					locking.NewRedisLocker,
 				),

@@ -7,7 +7,7 @@ import (
 	"github.com/mauricioabreu/mosaic-video/internal/config"
 	"github.com/mauricioabreu/mosaic-video/internal/logging"
 	"github.com/mauricioabreu/mosaic-video/internal/player"
-	"github.com/mauricioabreu/mosaic-video/internal/storage"
+	"github.com/mauricioabreu/mosaic-video/internal/storage/s3"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 )
@@ -22,9 +22,9 @@ func Player() *cobra.Command {
 			}
 
 			app := fx.New(
-				config.Module,
-				storage.Module,
 				fx.Provide(
+					config.NewConfig,
+					s3.NewClient,
 					logging.NewLogger,
 					player.NewHlsPlaylistHandler,
 					player.NewHlsPlayerHandler,
