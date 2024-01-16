@@ -24,8 +24,11 @@ jobs:
 
     - uses: extractions/setup-just@v1
 
-    - name: Build
-      run: go build -v ./...
-
     - name: Test
       run: just test
+
+    - name: Lint
+      run: just lint
+
+    - name: Build
+      run: go build -v ./...
