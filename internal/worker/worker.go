@@ -10,6 +10,8 @@ import (
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic/command"
 )
 
+const LockingTimeTTL time.Duration = 120 * time.Second
+
 func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
 	_, exists := runningProcesses[m.Name]
 	if exists {
@@ -18,7 +20,7 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 
 	ctx := context.Background()
 
-	lock, err := locker.Obtain(ctx, m.Name, 120*time.Second)
+	lock, err := locker.Obtain(ctx, m.Name, LockingTimeTTL)
 	if err != nil {
 		return err
 	}
