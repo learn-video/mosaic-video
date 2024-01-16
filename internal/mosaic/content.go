@@ -34,7 +34,8 @@ func FetchMosaicTasks(apiURL string) ([]Mosaic, error) {
 
 	var tasks []Mosaic
 
-	if err := json.NewDecoder(resp.Body).Decode(&tasks); err != nil {
+	err = json.NewDecoder(resp.Body).Decode(&tasks)
+	if err != nil {
 		return nil, err
 	}
 
