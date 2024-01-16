@@ -29,7 +29,7 @@ func (hh *HlsPlaylistHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 	hh.servePlaylistHTTPImpl(folder, filename, w, req)
 }
 
-func (hh *HlsPlaylistHandler) servePlaylistHTTPImpl(folder, filename string, w http.ResponseWriter, req *http.Request) {
+func (hh *HlsPlaylistHandler) servePlaylistHTTPImpl(folder, filename string, w http.ResponseWriter, _ *http.Request) {
 	file := fmt.Sprintf("%s/%s", folder, filename)
 	content, err := hh.storageHandler.Get(file)
 
