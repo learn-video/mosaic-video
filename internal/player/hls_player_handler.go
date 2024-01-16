@@ -30,8 +30,9 @@ func (hh *HlsPlayerHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) 
 	defer file.Close()
 
 	fileInfo, err := file.Stat()
+
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
