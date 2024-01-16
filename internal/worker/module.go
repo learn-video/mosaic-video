@@ -11,6 +11,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const SleepTime time.Duration = 60 * time.Second
+
 func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
@@ -38,7 +40,7 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 						}(task)
 					}
 
-					time.Sleep(60 * time.Second)
+					time.Sleep(SleepTime)
 				}
 			}()
 			return nil
