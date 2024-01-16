@@ -32,6 +32,7 @@ func (hh *HlsPlaylistHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 func (hh *HlsPlaylistHandler) servePlaylistHTTPImpl(folder string, filename string, w http.ResponseWriter, req *http.Request) {
 	file := fmt.Sprintf("%s/%s", folder, filename)
 	content, err := hh.storageHandler.Get(file)
+
 	if err != nil {
 		hh.logger.Errorf("failed to get %s file from bucket, err: %v", file, err)
 		w.WriteHeader(http.StatusBadRequest)
