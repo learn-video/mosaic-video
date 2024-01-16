@@ -28,6 +28,9 @@ jobs:
       run: just test
 
     - name: Lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: v1.54
       run: just lint
 
     - name: Build
