@@ -4,6 +4,7 @@ go 1.21.1
 
 require (
 	github.com/bsm/redislock v0.9.4
+	github.com/caarlos0/env/v10 v10.0.0
 	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
 	github.com/minio/minio-go/v7 v7.0.66
