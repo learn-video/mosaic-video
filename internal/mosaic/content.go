@@ -25,7 +25,7 @@ type (
 )
 
 func FetchMosaicTasks(apiURL string) ([]Mosaic, error) {
-	//nolint:gosec // we are skipping this because it's better way to validate the application, for while.
+	//nolint:gosec // we are skipping this because it's better way to validate the application, for now.
 	resp, err := http.Get(apiURL)
 	if err != nil {
 		return nil, err
