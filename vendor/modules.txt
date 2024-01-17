@@ -1,6 +1,9 @@
 # github.com/bsm/redislock v0.9.4
 ## explicit; go 1.17
 github.com/bsm/redislock
+# github.com/caarlos0/env/v10 v10.0.0
+## explicit; go 1.17
+github.com/caarlos0/env/v10
 # github.com/cespare/xxhash/v2 v2.2.0
 ## explicit; go 1.11
 github.com/cespare/xxhash/v2

@@ -1,51 +1,32 @@
 package config
 
-import "os"
+import (
+	"github.com/caarlos0/env/v10"
+)
 
 type Config struct {
 	Redis struct {
-		Host string
-		Port string
+		Host string `env:"REDIS_HOST,notEmpty"`
+		Port string `env:"REDIS_PORT,notEmpty"`
 	}
 	API struct {
-		URL string
+		URL string `env:"MOSAICS_API_URL,notEmpty"`
 	}
-	StaticsPath string
+	StaticsPath string `env:"STATICS_PATH,notEmpty"`
 	S3          struct {
-		Endpoint        string
-		AccessKeyID     string
-		SecretAccessKey string
-		BucketName      string
+		Endpoint        string `env:"S3_ENDPOINT,notEmpty"`
+		AccessKeyID     string `env:"S3_ACCESS_KEY_ID,notEmpty"`
+		SecretAccessKey string `env:"S3_SECRET_ACCESS_KEY,notEmpty"`
+		BucketName      string `env:"S3_BUCKET_NAME,notEmpty"`
 	}
-	UploaderEndpoint string
+	UploaderEndpoint string `env:"UPLOADER_ENDPOINT,notEmpty"`
 }
 
-func NewConfig() *Config {
-	return &Config{
-		Redis: struct {
-			Host string
-			Port string
-		}{
-			Host: os.Getenv("REDIS_HOST"),
-			Port: os.Getenv("REDIS_PORT"),
-		},
-		API: struct {
-			URL string
-		}{
-			URL: os.Getenv("MOSAICS_API_URL"),
-		},
-		S3: struct {
-			Endpoint        string
-			AccessKeyID     string
-			SecretAccessKey string
-			BucketName      string
-		}{
-			Endpoint:        os.Getenv("S3_ENDPOINT"),
-			AccessKeyID:     os.Getenv("S3_ACCESS_KEY_ID"),
-			SecretAccessKey: os.Getenv("S3_SECRET_ACCESS_KEY"),
-			BucketName:      os.Getenv("S3_BUCKET_NAME"),
-		},
-		StaticsPath:      os.Getenv("STATICS_PATH"),
-		UploaderEndpoint: os.Getenv("UPLOADER_ENDPOINT"),
+func NewConfig() (*Config, error) {
+	var cfg Config
+	if err := env.Parse(&cfg); err != nil {
+		return nil, err
 	}
+
+	return &cfg, nil
 }
