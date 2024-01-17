@@ -10,19 +10,75 @@ import (
 )
 
 func Build(m mosaic.Mosaic, cfg *config.Config) []string {
-	playlistPath := fmt.Sprintf("hls/%s/playlist.m3u8", m.Name)
+	videoInputArguments := getVideoInputArguments(m)
+	audioInputArguments := getAudioInputArguments(m)
+	filterComplexBuilder := getFilterComplexBuilder(m)
+	filterComplexArguments := getFilterComplexArguments(filterComplexBuilder)
+	encoderArguments := getEncoderArguments()
+	audioGroupArguments := getAudioGroupArguments(m)
+	hlsArguments := getHlsArguments(m, cfg)
 
-	var filterComplexBuilder strings.Builder
+	args := []string{"-loglevel", "error"}
+	args = append(args, videoInputArguments...)
+	args = append(args, filterComplexArguments...)
+	args = append(args, audioInputArguments...)
+	args = append(args, audioGroupArguments...)
+	args = append(args, encoderArguments...)
+	args = append(args, hlsArguments...)
 
-	filterComplexBuilder.WriteString("nullsrc=size=1920x1080 [background];")
-	filterComplexBuilder.WriteString("[0:v] realtime, scale=1920x1080 [image];")
+	return args
+}
+
+func getVideoInputArguments(m mosaic.Mosaic) []string {
+	args := []string{"-i", m.BackgroundURL}
+
+	for _, media := range m.Medias {
+		args = append(args,
+			"-i", media.URL,
+		)
+	}
+
+	return args
+}
+
+func getAudioInputArguments(m mosaic.Mosaic) []string {
+	args := []string{}
+
+	if m.Audio.IsNoAudio() {
+		return args
+	}
+
+	if m.Audio.IsFirstInput() {
+		args = append(args,
+			"-map", "[a1] -c:a aac -b:a 128k",
+		)
+	}
+
+	if m.Audio.IsAllInputs() {
+		for i := range m.Medias {
+			videoIndex := strconv.Itoa(i + 1)
+
+			args = append(args,
+				"-map", fmt.Sprintf("[a%s] -c:a aac -b:a 128k", videoIndex),
+			)
+		}
+	}
+
+	return args
+}
+
+func getFilterComplexBuilder(m mosaic.Mosaic) strings.Builder {
+	var filter strings.Builder
+
+	filter.WriteString("nullsrc=size=1920x1080 [background];")
+	filter.WriteString("[0:v] realtime, scale=1920x1080 [image];")
 
 	// Scale all videos
 	for i, media := range m.Medias {
 		videoIndex := strconv.Itoa(i + 1)
 
 		// Scale each video and assign a label
-		filterComplexBuilder.WriteString(fmt.Sprintf("[%d:v] setpts=PTS-STARTPTS, scale=%s [v%s];", i+1, media.Scale, videoIndex))
+		filter.WriteString(fmt.Sprintf("[%d:v] setpts=PTS-STARTPTS, scale=%s [v%s];", i+1, media.Scale, videoIndex))
 	}
 
 	// Then, overlay all videos
@@ -33,68 +89,107 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 
 		x, y := m.Medias[i].Position.X, m.Medias[i].Position.Y
 
-		filterComplexBuilder.WriteString(fmt.Sprintf("%s[v%s] overlay=shortest=0:x=%d:y=%d [%s];", lastOverlay, videoIndex, x, y, "posv"+videoIndex))
+		filter.WriteString(fmt.Sprintf("%s[v%s] overlay=shortest=0:x=%d:y=%d [%s];", lastOverlay, videoIndex, x, y, "posv"+videoIndex))
 
 		lastOverlay = "[posv" + videoIndex + "]"
 	}
 
-	filterComplexBuilder.WriteString(fmt.Sprintf("[image]%s overlay=shortest=0 [mosaic]", lastOverlay))
+	filter.WriteString(fmt.Sprintf("[image]%s overlay=shortest=0 [mosaic]", lastOverlay))
 
-	videoInputs := []string{}
-	audioInputs := []string{}
+	if !m.Audio.IsNoAudio() {
+		filter.WriteString(";")
 
-	for _, media := range m.Medias {
-		videoInputs = append(
-			videoInputs,
-			"-i", media.URL,
-		)
+		for i := range m.Medias {
+			videoIndex := strconv.Itoa(i + 1)
+
+			filter.WriteString(fmt.Sprintf("[%s:a] aresample=async=1 [a%s]", videoIndex, videoIndex))
+
+			if m.Audio.IsFirstInput() {
+				break
+			}
+
+			if m.Audio.IsAllInputs() {
+				if i < len(m.Medias)-1 {
+					filter.WriteString(";")
+				}
+			}
+		}
+	}
+
+	return filter
+}
+
+func getFilterComplexArguments(filter strings.Builder) []string {
+	args := []string{
+		"-filter_complex", filter.String(),
+		"-map", "[mosaic]",
+	}
+
+	return args
+}
+
+func getAudioGroupArguments(m mosaic.Mosaic) []string {
+	args := []string{}
+
+	if m.Audio.IsNoAudio() {
+		return args
 	}
 
 	if m.Audio.IsFirstInput() {
-		audioInputs = append(
-			audioInputs,
-			"-map", "1:a?",
+		args = append(args,
+			"-var_stream_map",
+			"a:0,agroup:audio,default:yes v:0,agroup:audio",
 		)
 	}
 
 	if m.Audio.IsAllInputs() {
+		group := strings.Builder{}
+
 		for i := range m.Medias {
-			audioInputs = append(
-				audioInputs,
-				"-map", fmt.Sprintf("%d:a?", i+1),
-			)
+			if i == 0 {
+				group.WriteString(fmt.Sprintf("a:%d,agroup:audio,default:yes ", i))
+			} else {
+				group.WriteString(fmt.Sprintf("a:%d,agroup:audio ", i))
+			}
 		}
+
+		group.WriteString("v:0,agroup:audio")
+
+		args = append(args,
+			"-var_stream_map", group.String(),
+		)
 	}
 
+	return args
+}
+
+func getEncoderArguments() []string {
 	args := []string{
-		"-loglevel", "error",
-		"-i", m.BackgroundURL,
-	}
-
-	args = append(args, videoInputs...)
-	args = append(args, audioInputs...)
-
-	args = append(args, []string{
-		"-filter_complex", filterComplexBuilder.String(),
-		"-map", "[mosaic]",
-	}...)
-
-	args = append(args, []string{
 		"-c:v", "libx264",
+		"-b:v", "1000k",
 		"-x264opts", "keyint=30:min-keyint=30:scenecut=-1",
 		"-preset", "ultrafast",
 		"-threads", "0",
-		"-r", "24",
-		"-c:a", "copy",
+	}
+
+	return args
+}
+
+func getHlsArguments(m mosaic.Mosaic, cfg *config.Config) []string {
+	playlistPath := fmt.Sprintf("hls/%s/playlist_%%v.m3u8", m.Name)
+	segmentPath := fmt.Sprintf("hls/%s/segment_%%v_%%03d.ts", m.Name)
+
+	args := []string{
 		"-f", "hls",
-		"-hls_playlist_type", "event",
 		"-hls_time", "5",
-		"-strftime", "1",
+		"-hls_list_size", "6",
+		"-sc_threshold", "0",
 		"-method", "PUT",
 		"-http_persistent", "1",
-		"-sc_threshold", "0",
+		"-hls_segment_filename", fmt.Sprintf("%s/%s", cfg.UploaderEndpoint, segmentPath),
+		"-master_pl_name", "master.m3u8",
 		fmt.Sprintf("%s/%s", cfg.UploaderEndpoint, playlistPath),
-	}...)
+	}
 
 	return args
 }
