@@ -12,7 +12,7 @@
                 "scale": "1170x660"
             },
             {
-                "url": "https://canadaremar2.todostreaming.es/live/peque-pequetv.m3u8",
+                "url": "https://limited38.todostreaming.es/live/101tv-web101tv.m3u8",
                 "position": {
                     "x": 1260,
                     "y": 40
@@ -20,6 +20,6 @@
                 "scale": "568x320"
             }
         ],
-        "audio": "first_input"
+        "audio": "all_inputs"
     }
 ]
