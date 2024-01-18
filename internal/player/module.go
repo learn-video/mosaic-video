@@ -25,6 +25,7 @@ func Run(
 			r := mux.NewRouter()
 			r.Handle("/playlist/{folder}/{filename}", playlistHandler).Methods("GET")
 			r.Handle("/player", playerHandler).Methods("GET")
+			r.Handle("/player/assets/{file}", playerHandler).Methods("GET")
 
 			go func() {
 				server := &http.Server{
