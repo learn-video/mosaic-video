@@ -21,7 +21,7 @@ The project has two main components:
 ## Features
 
 * Generate mosaic from multiple video inputs;
-* Multiples audios support;
+* Multiples audios support:
     * No audio;
     * First input audio only;
     * All inputs audios.
@@ -33,7 +33,8 @@ The project has two main components:
 
 ## Roadmap
 
-* Nothing yet
+* Local storage;
+* Support for running distributed workers.
 
 ## Running and tests
 
