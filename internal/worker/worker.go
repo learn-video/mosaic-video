@@ -2,6 +2,8 @@ package worker
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -16,6 +18,10 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 	_, exists := runningProcesses[m.Name]
 	if exists {
 		return nil
+	}
+
+	if err := createDirIfNotExist(m, cfg); err != nil {
+		return err
 	}
 
 	ctx := context.Background()
@@ -35,6 +41,24 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 	}
 
 	runningProcesses[m.Name] = true
+
+	return nil
+}
+
+func createDirIfNotExist(m mosaic.Mosaic, cfg *config.Config) error {
+	if cfg.StorageType == "local" {
+		path := fmt.Sprintf("%s/%s", cfg.LocalStorage.Path, m.Name)
+
+		if _, err := os.Stat(path); err != nil {
+			if !os.IsNotExist(err) {
+				return err
+			}
+
+			if err := os.MkdirAll(path, os.ModePerm); err != nil {
+				return fmt.Errorf("failed to create mosaic directory path=%s  error=%w", path, err)
+			}
+		}
+	}
 
 	return nil
 }
