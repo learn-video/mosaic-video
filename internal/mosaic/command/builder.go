@@ -210,6 +210,7 @@ func getLocalSavingArguments(m mosaic.Mosaic, cfg *config.Config) []string {
 		"-hls_list_size", "6",
 		"-hls_start_number_source", "epoch",
 		"-hls_segment_filename", segmentPath,
+		"-master_pl_name", "master.m3u8",
 		playlistPath,
 	}
 
