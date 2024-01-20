@@ -16,7 +16,13 @@ func Build(m mosaic.Mosaic, cfg *config.Config) []string {
 	filterComplexArguments := getFilterComplexArguments(filterComplexBuilder)
 	encoderArguments := getEncoderArguments()
 	audioGroupArguments := getAudioGroupArguments(m)
-	hlsArguments := getHlsArguments(m, cfg)
+
+	var hlsArguments []string
+	if cfg.StorageType == "local" {
+		hlsArguments = getLocalSavingArguments(m, cfg)
+	} else {
+		hlsArguments = getHlsArguments(m, cfg)
+	}
 
 	args := []string{"-loglevel", "error"}
 	args = append(args, videoInputArguments...)
@@ -186,9 +192,25 @@ func getHlsArguments(m mosaic.Mosaic, cfg *config.Config) []string {
 		"-sc_threshold", "0",
 		"-method", "PUT",
 		"-http_persistent", "1",
-		"-hls_segment_filename", fmt.Sprintf("%s/%s", cfg.UploaderEndpoint, segmentPath),
+		"-hls_segment_filename", fmt.Sprintf("%s/%s", cfg.S3.UploaderEndpoint, segmentPath),
 		"-master_pl_name", "master.m3u8",
-		fmt.Sprintf("%s/%s", cfg.UploaderEndpoint, playlistPath),
+		fmt.Sprintf("%s/%s", cfg.S3.UploaderEndpoint, playlistPath),
+	}
+
+	return args
+}
+
+func getLocalSavingArguments(m mosaic.Mosaic, cfg *config.Config) []string {
+	playlistPath := fmt.Sprintf("%s/%s/playlist_%%v.m3u8", cfg.LocalStorage.Path, m.Name)
+	segmentPath := fmt.Sprintf("%s/%s/segment_%%v_%%03d.ts", cfg.LocalStorage.Path, m.Name)
+
+	args := []string{
+		"-f", "hls",
+		"-hls_time", "5",
+		"-hls_list_size", "6",
+		"-hls_start_number_source", "epoch",
+		"-hls_segment_filename", segmentPath,
+		playlistPath,
 	}
 
 	return args

@@ -49,8 +49,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				Audio: mosaic.FirstInput,
 			},
 			cfg: &config.Config{
-				StaticsPath:      "statics",
-				UploaderEndpoint: "http://localhost:8080",
+				S3: config.S3{UploaderEndpoint: "http://localhost:8080"},
 			},
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
@@ -106,8 +105,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				Audio: mosaic.AllInputs,
 			},
 			cfg: &config.Config{
-				StaticsPath:      "statics",
-				UploaderEndpoint: "http://localhost:8080",
+				S3: config.S3{UploaderEndpoint: "http://localhost:8080"},
 			},
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
@@ -164,8 +162,7 @@ func TestBuildFFMPEGCommand(t *testing.T) {
 				Audio: mosaic.NoAudio,
 			},
 			cfg: &config.Config{
-				StaticsPath:      "statics",
-				UploaderEndpoint: "http://localhost:8080",
+				S3: config.S3{UploaderEndpoint: "http://localhost:8080"},
 			},
 			expectedCmd: "ffmpeg",
 			expectedArgs: []string{
