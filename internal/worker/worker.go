@@ -2,25 +2,24 @@ package worker
 
 import (
 	"context"
-	"fmt"
-	"os"
 	"time"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
 	"github.com/mauricioabreu/mosaic-video/internal/locking"
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic/command"
+	"github.com/mauricioabreu/mosaic-video/internal/storage"
 )
 
 const LockingTimeTTL time.Duration = 120 * time.Second
 
-func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool) error {
+func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool, stg storage.Storage) error {
 	_, exists := runningProcesses[m.Name]
 	if exists {
 		return nil
 	}
 
-	if err := createDirIfNotExist(m, cfg); err != nil {
+	if err := createDirIfNotExist(m, cfg, stg); err != nil {
 		return err
 	}
 
@@ -45,19 +44,9 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 	return nil
 }
 
-func createDirIfNotExist(m mosaic.Mosaic, cfg *config.Config) error {
-	if cfg.StorageType == "local" {
-		path := fmt.Sprintf("%s/%s", cfg.LocalStorage.Path, m.Name)
-
-		if _, err := os.Stat(path); err != nil {
-			if !os.IsNotExist(err) {
-				return err
-			}
-
-			if err := os.MkdirAll(path, os.ModePerm); err != nil {
-				return fmt.Errorf("failed to create mosaic directory path=%s  error=%w", path, err)
-			}
-		}
+func createDirIfNotExist(m mosaic.Mosaic, cfg *config.Config, stg storage.Storage) error {
+	if cfg.StorageType.IsLocal() {
+		return stg.CreateBucket(m.Name)
 	}
 
 	return nil

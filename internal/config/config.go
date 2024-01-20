@@ -6,6 +6,21 @@ import (
 	"github.com/caarlos0/env/v10"
 )
 
+type StorageType string
+
+const (
+	Cloud StorageType = "s3"
+	Local StorageType = "local"
+)
+
+func (t StorageType) IsLocal() bool {
+	return t == Local
+}
+
+func (t StorageType) IsCloud() bool {
+	return t == Cloud
+}
+
 type LocalStorage struct {
 	Path string `env:"LOCAL_STORAGE_PATH,notEmpty"`
 }
@@ -26,7 +41,7 @@ type Config struct {
 	API struct {
 		URL string `env:"MOSAICS_API_URL,notEmpty"`
 	}
-	StorageType  string `env:"STORAGE_TYPE" envDefault:"local"`
+	StorageType  StorageType `env:"STORAGE_TYPE" envDefault:"local"`
 	LocalStorage LocalStorage
 	S3           S3
 }
@@ -38,11 +53,11 @@ func NewConfig() (*Config, error) {
 	}
 
 	switch cfg.StorageType {
-	case "local":
+	case Local:
 		if err := env.Parse(&cfg.LocalStorage); err != nil {
 			return nil, err
 		}
-	case "s3":
+	case Cloud:
 		if err := env.Parse(&cfg.S3); err != nil {
 			return nil, err
 		}

@@ -17,6 +17,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	defer ctrl.Finish()
 
 	locker := mocks.NewMockLocker(ctrl)
+	storage := mocks.NewMockStorage(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
 		Medias: []mosaic.Media{
@@ -26,6 +27,11 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	}
 	cfg := &config.Config{}
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(nil, errors.New("error obtaining lock"))
+
+	if cfg.StorageType.IsLocal() {
+		storage.EXPECT().CreateBucket(gomock.Any()).Return(nil)
+	}
+
 	runningProcesses := make(map[string]bool)
 
 	err := worker.GenerateMosaic(
@@ -34,6 +40,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 		locker,
 		nil,
 		runningProcesses,
+		storage,
 	)
 
 	assert.Error(t, err)
@@ -45,6 +52,7 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 
 	cfg := &config.Config{}
 	locker := mocks.NewMockLocker(ctrl)
+	storage := mocks.NewMockStorage(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
 		Medias: []mosaic.Media{
@@ -69,6 +77,10 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	lock.EXPECT().Release(gomock.Any()).Return(nil)
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(lock, nil)
 
+	if cfg.StorageType.IsLocal() {
+		storage.EXPECT().CreateBucket(gomock.Any()).Return(nil)
+	}
+
 	cmdExecutor := mocks.NewMockCommand(ctrl)
 	cmdExecutor.EXPECT().Execute("ffmpeg", gomock.Any()).Return(errors.New("error executing command"))
 	runningProcesses := make(map[string]bool)
@@ -79,6 +91,7 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 		locker,
 		cmdExecutor,
 		runningProcesses,
+		storage,
 	)
 
 	assert.Error(t, err)

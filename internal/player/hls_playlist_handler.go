@@ -61,17 +61,6 @@ func (hh *HlsPlaylistHandler) servePlaylistHTTPImpl(folder, filename string, w h
 func (hh *HlsPlaylistHandler) getFile(folder, name string) (io.Reader, error) {
 	filename := fmt.Sprintf("%s/%s", folder, name)
 
-	if hh.cfg.StorageType == "local" {
-		path := fmt.Sprintf("%s/%s", hh.cfg.LocalStorage.Path, filename)
-
-		file, err := os.Open(path)
-		if err != nil {
-			return nil, err
-		}
-
-		return file, nil
-	}
-
 	file, err := hh.storageHandler.Get(filename)
 	if err != nil {
 		return nil, err
