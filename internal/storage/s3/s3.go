@@ -27,7 +27,18 @@ func NewClient(cfg *config.Config) (storage.Storage, error) {
 }
 
 func (s3c *Client) CreateBucket(bucketName string) error {
-	return s3c.client.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{})
+	ctx := context.Background()
+
+	exists, err := s3c.client.BucketExists(ctx, bucketName)
+	if err != nil {
+		return err
+	}
+
+	if !exists {
+		return s3c.client.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{})
+	}
+
+	return nil
 }
 
 func (s3c *Client) Upload(filename string, data []byte) error {

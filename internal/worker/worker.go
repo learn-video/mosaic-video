@@ -19,7 +19,7 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 		return nil
 	}
 
-	if err := createDirIfNotExist(m, cfg, stg); err != nil {
+	if err := stg.CreateBucket(m.Name); err != nil {
 		return err
 	}
 
@@ -40,14 +40,6 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 	}
 
 	runningProcesses[m.Name] = true
-
-	return nil
-}
-
-func createDirIfNotExist(m mosaic.Mosaic, cfg *config.Config, stg storage.Storage) error {
-	if cfg.StorageType.IsLocal() {
-		return stg.CreateBucket(m.Name)
-	}
 
 	return nil
 }
