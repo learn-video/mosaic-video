@@ -14,7 +14,9 @@ It uses ffmpeg to capture the video and position them in a grid.
 
 The project has two main components:
 * Worker: a Go process that receives the inputs and generates the mosaic;
-* Storage backend: HTTP server that receives the mosaic through HTTP and stores it on S3.
+* Storage backend:
+    * HTTP server that receives the mosaic through HTTP and stores it on S3;
+    * Or a local storage backend (local filesystem).
 
 ![Mosaic Video design](docs/static/mosaic_design.png)
 
