@@ -29,11 +29,13 @@ The project has two main components:
 * Available outputs: HLS;
 * A simple HLS Player available in: http://localhost:8090/player;
 * Dynamic scaling/positioning of the inputs;
-* Dynamic background for each mosaic.
+* Dynamic background for each mosaic;
+* Storage and delivery content options:
+    * S3;
+    * File system.
 
 ## Roadmap
 
-* Local storage;
 * Support for running distributed workers.
 
 ## Running and tests
