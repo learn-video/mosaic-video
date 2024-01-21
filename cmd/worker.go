@@ -7,6 +7,9 @@ import (
 	"github.com/mauricioabreu/mosaic-video/internal/config"
 	"github.com/mauricioabreu/mosaic-video/internal/locking"
 	"github.com/mauricioabreu/mosaic-video/internal/logging"
+	"github.com/mauricioabreu/mosaic-video/internal/storage"
+	"github.com/mauricioabreu/mosaic-video/internal/storage/local"
+	"github.com/mauricioabreu/mosaic-video/internal/storage/s3"
 	"github.com/mauricioabreu/mosaic-video/internal/worker"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -26,6 +29,12 @@ func Work() *cobra.Command {
 					config.NewConfig,
 					logging.NewLogger,
 					locking.NewRedisLocker,
+					func(cfg *config.Config) (storage.Storage, error) {
+						if cfg.StorageType.IsLocal() {
+							return local.NewClient(cfg), nil
+						}
+						return s3.NewClient(cfg)
+					},
 				),
 				fx.Invoke(worker.Run),
 			)
