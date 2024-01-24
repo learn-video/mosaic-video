@@ -34,6 +34,7 @@ type (
 		URL      string `json:"url"`
 		Position Position
 		Scale    string
+		IsLoop   bool `json:"is_loop"`
 	}
 
 	Mosaic struct {

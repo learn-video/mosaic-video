@@ -18,8 +18,26 @@
                     "y": 40
                 },
                 "scale": "568x320"
+            },
+            {
+                "url": "./statics/qrcode.mp4",
+                "position": {
+                    "x": 1260,
+                    "y": 380
+                },
+                "scale": "568x320",
+                "is_loop": true
+            },
+            {
+                "url": "./statics/subscribe.mp4",
+                "position": {
+                    "x": 84,
+                    "y": 720
+                },
+                "scale": "1745x300",
+                "is_loop": true
             }
         ],
-        "audio": "all_inputs"
+        "audio": "first_input"
     }
 ]
