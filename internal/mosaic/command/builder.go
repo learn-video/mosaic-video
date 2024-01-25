@@ -39,6 +39,12 @@ func getVideoInputArguments(m mosaic.Mosaic) []string {
 	args := []string{"-i", m.BackgroundURL}
 
 	for _, media := range m.Medias {
+		if media.IsLoop {
+			args = append(args,
+				"-stream_loop", "-1",
+			)
+		}
+
 		args = append(args,
 			"-i", media.URL,
 		)
