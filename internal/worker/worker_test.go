@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
+	"github.com/mauricioabreu/mosaic-video/internal/logging"
 	"github.com/mauricioabreu/mosaic-video/internal/mocks"
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
 	"github.com/mauricioabreu/mosaic-video/internal/worker"
@@ -16,6 +17,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	logger := logging.NewLogger()
 	locker := mocks.NewMockLocker(ctrl)
 	storage := mocks.NewMockStorage(ctrl)
 	mosaic := mosaic.Mosaic{
@@ -34,6 +36,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	err := worker.GenerateMosaic(
 		mosaic,
 		cfg,
+		logger,
 		locker,
 		nil,
 		runningProcesses,
@@ -48,6 +51,7 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	defer ctrl.Finish()
 
 	cfg := &config.Config{}
+	logger := logging.NewLogger()
 	locker := mocks.NewMockLocker(ctrl)
 	storage := mocks.NewMockStorage(ctrl)
 	mosaic := mosaic.Mosaic{
@@ -82,6 +86,7 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	err := worker.GenerateMosaic(
 		mosaic,
 		cfg,
+		logger,
 		locker,
 		cmdExecutor,
 		runningProcesses,
@@ -96,6 +101,7 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 	defer ctrl.Finish()
 
 	cfg := &config.Config{}
+	logger := logging.NewLogger()
 	storage := mocks.NewMockStorage(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
@@ -124,6 +130,7 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 	err := worker.GenerateMosaic(
 		mosaic,
 		cfg,
+		logger,
 		nil,
 		nil,
 		runningProcesses,

@@ -35,7 +35,7 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 								delete(runningProcesses, m.Name)
 							}()
 
-							if err := GenerateMosaic(m, cfg, locker, &mosaic.FFMPEGCommand{}, runningProcesses, stg); err != nil {
+							if err := GenerateMosaic(m, cfg, logger, locker, &mosaic.FFMPEGCommand{}, runningProcesses, stg); err != nil {
 								logger.Error(err)
 							}
 						}(task)
