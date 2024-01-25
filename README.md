@@ -27,7 +27,7 @@ The project has two main components:
     * No audio;
     * First input audio only;
     * All inputs audios.
-* Available inputs: HLS and RTMP;
+* Available inputs: HLS, RTMP and MP4;
 * Available outputs: HLS;
 * A simple HLS Player available in: http://localhost:8090/player;
 * Dynamic scaling/positioning of the inputs;
@@ -35,6 +35,8 @@ The project has two main components:
 * Storage and delivery content options:
     * S3;
     * File system.
+* VoD in looping.
+    * To use like a promo video, see this [example](https://streamable.com/093xvt).
 
 ## Roadmap
 
