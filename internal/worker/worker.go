@@ -2,7 +2,6 @@ package worker
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -10,6 +9,7 @@ import (
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic"
 	"github.com/mauricioabreu/mosaic-video/internal/mosaic/command"
 	"github.com/mauricioabreu/mosaic-video/internal/storage"
+	"go.uber.org/zap"
 )
 
 const (
@@ -17,7 +17,15 @@ const (
 	KeepAliveInterval time.Duration = LockingTimeTTL / 3
 )
 
-func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, cmdExecutor mosaic.Command, runningProcesses map[string]bool, stg storage.Storage) error {
+func GenerateMosaic(
+	m mosaic.Mosaic,
+	cfg *config.Config,
+	logger *zap.SugaredLogger,
+	locker locking.Locker,
+	cmdExecutor mosaic.Command,
+	runningProcesses map[string]bool,
+	stg storage.Storage,
+) error {
 	_, exists := runningProcesses[m.Name]
 	if exists {
 		return nil
@@ -35,7 +43,7 @@ func GenerateMosaic(m mosaic.Mosaic, cfg *config.Config, locker locking.Locker, 
 		return err
 	}
 
-	go keepAlive(ctx, lock)
+	go keepAlive(ctx, logger, lock)
 
 	args := command.Build(m, cfg)
 	if err := cmdExecutor.Execute("ffmpeg", args...); err != nil {
@@ -59,7 +67,7 @@ func createBucket(m *mosaic.Mosaic, cfg *config.Config, stg storage.Storage) err
 	return stg.CreateBucket(cfg.S3.BucketName)
 }
 
-func keepAlive(ctx context.Context, lock locking.Lock) {
+func keepAlive(ctx context.Context, logger *zap.SugaredLogger, lock locking.Lock) {
 	ticker := time.NewTicker(KeepAliveInterval)
 
 	for {
@@ -69,7 +77,7 @@ func keepAlive(ctx context.Context, lock locking.Lock) {
 			return
 		case <-ticker.C:
 			if err := lock.Refresh(ctx, LockingTimeTTL); err != nil {
-				log.Println("failed to refresh lock TTL, error=%w", err)
+				logger.Errorf("failed to refresh lock TTL, error=%v", err)
 			}
 		}
 	}
