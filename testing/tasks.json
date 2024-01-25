@@ -17,16 +17,7 @@
                     "x": 1260,
                     "y": 40
                 },
-                "scale": "568x320"
-            },
-            {
-                "url": "./statics/qrcode.mp4",
-                "position": {
-                    "x": 1260,
-                    "y": 380
-                },
-                "scale": "568x320",
-                "is_loop": true
+                "scale": "568x660"
             },
             {
                 "url": "./statics/subscribe.mp4",
