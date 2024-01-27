@@ -13,4 +13,4 @@
 **Do you intend to add a new feature or change an existing one?**
 
 * Suggest your change by creating a new issue as a **feature request**.
-* Do not open an issue on GitHub until you have collected positive feedback about the change. Waiting for feedback will save you time.
+* Do not open a pull requests on GitHub until you have collected positive feedback about the change. Waiting for feedback will save you time.
