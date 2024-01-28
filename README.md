@@ -42,7 +42,22 @@ The project has two main components:
 
 * Support for running distributed workers.
 
-## Running and tests
+## Running
+
+To run the project, certain environment variables need to be set. These variables can be found in the [.env](.env) file.
+
+Each worker, when running, fetches mosaic settings from an API. A mock API is available, detailed in, detailed in [tasks.json](testing/tasks.json). Below is a breakdown of each field in the JSON:
+
+* **name**: A string identifier for the mosaic configuration. In this case, it's set to "mosaic".
+* **background_url**: The URL of the background image to be used in the mosaic. It is a link to an image file.
+**medias**: An array of objects, each representing a media element in the mosaic. Each object in this array has the following fields:
+    * **url**: The URL of the media source. This can be a live stream or a video file. Examples include HLS (.m3u8) links and local video files (e.g., "subscribe.mp4").
+    * **position**: An object specifying the x and y coordinates (in pixels) of the top-left corner of this media element within the mosaic.
+    * **scale**: The size of the media element in the format "width x height" (in pixels).
+    * **is_loop** (optional): A boolean indicating whether the video should loop. This is relevant for video files rather than live streams.
+* **audio**: This field specifies how the audio should be handled in the mosaic. The options include "no_audio", "first_input", or "all_inputs". In this JSON, it's set to "first_input", meaning only the audio from the first media input will be used.
+
+## Commands
 
 `just test` to run the tests.
 
