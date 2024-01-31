@@ -1,10 +1,5 @@
 package mosaic
 
-import (
-	"encoding/json"
-	"net/http"
-)
-
 type Audio string
 
 const (
@@ -44,22 +39,3 @@ type (
 		Audio         Audio   `json:"audio"`
 	}
 )
-
-func FetchMosaicTasks(apiURL string) ([]Mosaic, error) {
-	//nolint:gosec // we are skipping this because it's better way to validate the application, for now.
-	resp, err := http.Get(apiURL)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	var tasks []Mosaic
-
-	err = json.NewDecoder(resp.Body).Decode(&tasks)
-	if err != nil {
-		return nil, err
-	}
-
-	return tasks, err
-}
