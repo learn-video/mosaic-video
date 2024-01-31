@@ -15,3 +15,6 @@ storage:
 
 player:
     go run main.go player
+
+simulate:
+    go run main.go simulate

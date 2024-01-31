@@ -18,6 +18,7 @@ func NewRootCmd() *cobra.Command {
 	rootCmd.AddCommand(Work())
 	rootCmd.AddCommand(Store())
 	rootCmd.AddCommand(Player())
+	rootCmd.AddCommand(Simulate())
 
 	return rootCmd
 }

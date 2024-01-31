@@ -38,9 +38,6 @@ type Config struct {
 		Host string `env:"REDIS_HOST,notEmpty"`
 		Port string `env:"REDIS_PORT,notEmpty"`
 	}
-	API struct {
-		URL string `env:"MOSAICS_API_URL,notEmpty"`
-	}
 	StorageType  StorageType `env:"STORAGE_TYPE" envDefault:"local"`
 	LocalStorage LocalStorage
 	S3           S3
