@@ -19,7 +19,7 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 			redisAddress := cfg.Redis.Host + ":" + cfg.Redis.Port
 			srv := asynq.NewServer(
 				asynq.RedisClientOpt{Addr: redisAddress},
-				asynq.Config{Concurrency: 10},
+				asynq.Config{Concurrency: cfg.MaxConcurrentTasks},
 			)
 
 			rp := make(map[string]bool)
@@ -44,7 +44,7 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 	})
 }
 
-func handleStartMosaicTask(ctx context.Context, t *asynq.Task, cfg *config.Config, logger *zap.SugaredLogger, locker locking.Locker, rp map[string]bool, stg storage.Storage) error {
+func handleStartMosaicTask(_ctx context.Context, t *asynq.Task, cfg *config.Config, logger *zap.SugaredLogger, locker locking.Locker, rp map[string]bool, stg storage.Storage) error {
 	var p StartMosaicPayload
 	if err := json.Unmarshal(t.Payload(), &p); err != nil {
 		return err
