@@ -18,3 +18,6 @@ player:
 
 simulate:
     go run main.go simulate
+
+cleanup:
+    rm -rf hls/*

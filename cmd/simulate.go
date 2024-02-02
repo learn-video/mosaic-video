@@ -31,14 +31,14 @@ func Simulate() *cobra.Command {
 			client := asynq.NewClient(asynq.RedisClientOpt{Addr: redisAddress})
 			defer client.Close()
 
-			if err := enqueueStartMosaicTask(client); err != nil {
+			if err := enqueueStartMosaicTask(client, cfg); err != nil {
 				log.Println(err)
 			}
 		},
 	}
 }
 
-func enqueueStartMosaicTask(client *asynq.Client) error {
+func enqueueStartMosaicTask(client *asynq.Client, cfg *config.Config) error {
 	fileData, err := os.ReadFile("./testing/tasks.json")
 	if err != nil {
 		return err
@@ -58,7 +58,7 @@ func enqueueStartMosaicTask(client *asynq.Client) error {
 
 		_, err = client.Enqueue(
 			asynq.NewTask(worker.TypeStartMosaic, payload),
-			asynq.TaskID(m.Name),
+			asynq.MaxRetry(cfg.MaxRetriesTasks),
 		)
 		if err != nil {
 			return err

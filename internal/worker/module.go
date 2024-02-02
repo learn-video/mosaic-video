@@ -50,5 +50,7 @@ func handleStartMosaicTask(_ctx context.Context, t *asynq.Task, cfg *config.Conf
 		return err
 	}
 
+	logger.Info("Processing mosaic: ", p.Mosaic.Name)
+
 	return GenerateMosaic(p.Mosaic, cfg, logger, locker, &mosaic.FFMPEGCommand{}, rp, stg)
 }
