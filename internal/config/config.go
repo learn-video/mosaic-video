@@ -39,6 +39,7 @@ type Config struct {
 		Port string `env:"REDIS_PORT,notEmpty"`
 	}
 	MaxConcurrentTasks int         `env:"MAX_CONCURRENT_TASKS" envDefault:"10"`
+	MaxRetriesTasks    int         `env:"MAX_RETRIES_TASKS" envDefault:"5"`
 	StorageType        StorageType `env:"STORAGE_TYPE" envDefault:"local"`
 	LocalStorage       LocalStorage
 	S3                 S3
