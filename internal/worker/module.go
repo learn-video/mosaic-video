@@ -60,7 +60,7 @@ func handleStartMosaicTask(ctx context.Context, t *asynq.Task, cfg *config.Confi
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
-	case res := <-c:
-		return res
+	case err := <-c:
+		return err
 	}
 }

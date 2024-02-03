@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -17,6 +18,10 @@ const (
 	KeepAliveInterval time.Duration = LockingTimeTTL / 3
 )
 
+var (
+	runningMutex sync.Mutex
+)
+
 func GenerateMosaic(
 	ctx context.Context,
 	m mosaic.Mosaic,
@@ -27,10 +32,19 @@ func GenerateMosaic(
 	runningProcesses map[string]bool,
 	stg storage.Storage,
 ) error {
-	_, exists := runningProcesses[m.Name]
-	if exists {
+	runningMutex.Lock()
+	if _, exists := runningProcesses[m.Name]; exists {
+		runningMutex.Unlock()
 		return nil
 	}
+	runningProcesses[m.Name] = true
+	runningMutex.Unlock()
+
+	defer func() {
+		runningMutex.Lock()
+		delete(runningProcesses, m.Name)
+		runningMutex.Unlock()
+	}()
 
 	if err := createBucket(&m, cfg, stg); err != nil {
 		return err
@@ -56,8 +70,6 @@ func GenerateMosaic(
 			return err
 		}
 	}
-
-	runningProcesses[m.Name] = true
 
 	return nil
 }
