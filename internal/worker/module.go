@@ -62,6 +62,7 @@ func handleStartMosaicTask(ctx context.Context, t *asynq.Task, cfg *config.Confi
 	case <-ctx.Done():
 		return ctx.Err()
 	case err := <-c:
+		logger.Errorf("Error processing mosaic '%s': %w", p.Mosaic.Name, err)
 		return err
 	}
 }
