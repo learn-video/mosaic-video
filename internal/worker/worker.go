@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -49,16 +50,23 @@ func GenerateMosaic(
 
 	select {
 	case <-ctx.Done():
+		lock.Release(ctx)
 		return ctx.Err()
 	default:
 		args := command.Build(m, cfg)
-		if err := cmdExecutor.Execute(ctx, "ffmpeg", args...); err != nil {
+		if err := executeCommand(ctx, cmdExecutor, args, logger); err != nil {
 			if lerr := lock.Release(ctx); lerr != nil {
 				return lerr
 			}
-
-			return err
 		}
+	}
+
+	return nil
+}
+
+func executeCommand(ctx context.Context, cmdExecutor mosaic.Command, args []string, logger *zap.SugaredLogger) error {
+	if err := cmdExecutor.Execute(ctx, "ffmpeg", args...); err != nil {
+		return fmt.Errorf("failed to execute command, error=%w", err)
 	}
 
 	return nil
@@ -82,7 +90,7 @@ func keepAlive(ctx context.Context, logger *zap.SugaredLogger, lock locking.Lock
 			return
 		case <-ticker.C:
 			if err := lock.Refresh(ctx, LockingTimeTTL); err != nil {
-				logger.Errorf("failed to refresh lock TTL, error=%v", err)
+				logger.Errorf("failed to refresh lock TTL, error=%w", err)
 			}
 		}
 	}
