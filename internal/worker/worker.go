@@ -50,11 +50,14 @@ func GenerateMosaic(
 
 	select {
 	case <-ctx.Done():
-		lock.Release(ctx)
+		if err := lock.Release(ctx); err != nil {
+			return err
+		}
+
 		return ctx.Err()
 	default:
 		args := command.Build(m, cfg)
-		if err := executeCommand(ctx, cmdExecutor, args, logger); err != nil {
+		if err := executeCommand(ctx, cmdExecutor, args); err != nil {
 			if lerr := lock.Release(ctx); lerr != nil {
 				return lerr
 			}
@@ -64,7 +67,7 @@ func GenerateMosaic(
 	return nil
 }
 
-func executeCommand(ctx context.Context, cmdExecutor mosaic.Command, args []string, logger *zap.SugaredLogger) error {
+func executeCommand(ctx context.Context, cmdExecutor mosaic.Command, args []string) error {
 	if err := cmdExecutor.Execute(ctx, "ffmpeg", args...); err != nil {
 		return fmt.Errorf("failed to execute command, error=%w", err)
 	}
