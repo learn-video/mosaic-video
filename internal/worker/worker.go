@@ -18,6 +18,7 @@ const (
 )
 
 func GenerateMosaic(
+	ctx context.Context,
 	m mosaic.Mosaic,
 	cfg *config.Config,
 	logger *zap.SugaredLogger,
@@ -35,9 +36,6 @@ func GenerateMosaic(
 		return err
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	lock, err := locker.Obtain(ctx, m.Name, LockingTimeTTL)
 	if err != nil {
 		return err
@@ -45,13 +43,18 @@ func GenerateMosaic(
 
 	go keepAlive(ctx, logger, lock)
 
-	args := command.Build(m, cfg)
-	if err := cmdExecutor.Execute("ffmpeg", args...); err != nil {
-		if lerr := lock.Release(ctx); lerr != nil {
-			return lerr
-		}
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		args := command.Build(m, cfg)
+		if err := cmdExecutor.Execute(ctx, "ffmpeg", args...); err != nil {
+			if lerr := lock.Release(ctx); lerr != nil {
+				return lerr
+			}
 
-		return err
+			return err
+		}
 	}
 
 	runningProcesses[m.Name] = true

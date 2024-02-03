@@ -1,6 +1,7 @@
 package worker_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -34,6 +35,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	runningProcesses := make(map[string]bool)
 
 	err := worker.GenerateMosaic(
+		context.TODO(),
 		mosaic,
 		cfg,
 		logger,
@@ -79,11 +81,13 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(lock, nil)
 	storage.EXPECT().CreateBucket(gomock.Any()).Return(nil)
 
+	ctx := context.TODO()
 	cmdExecutor := mocks.NewMockCommand(ctrl)
-	cmdExecutor.EXPECT().Execute("ffmpeg", gomock.Any()).Return(errors.New("error executing command"))
+	cmdExecutor.EXPECT().Execute(ctx, "ffmpeg", gomock.Any()).Return(errors.New("error executing command"))
 	runningProcesses := make(map[string]bool)
 
 	err := worker.GenerateMosaic(
+		ctx,
 		mosaic,
 		cfg,
 		logger,
@@ -128,6 +132,7 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 	runningProcesses := make(map[string]bool)
 
 	err := worker.GenerateMosaic(
+		context.TODO(),
 		mosaic,
 		cfg,
 		logger,
