@@ -9,6 +9,7 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"
@@ -38,9 +39,9 @@ func (m *MockCommand) EXPECT() *MockCommandMockRecorder {
 }
 
 // Execute mocks base method.
-func (m *MockCommand) Execute(command string, args ...string) error {
+func (m *MockCommand) Execute(ctx context.Context, command string, args ...string) error {
 	m.ctrl.T.Helper()
-	varargs := []any{command}
+	varargs := []any{ctx, command}
 	for _, a := range args {
 		varargs = append(varargs, a)
 	}
@@ -50,8 +51,8 @@ func (m *MockCommand) Execute(command string, args ...string) error {
 }
 
 // Execute indicates an expected call of Execute.
-func (mr *MockCommandMockRecorder) Execute(command any, args ...any) *gomock.Call {
+func (mr *MockCommandMockRecorder) Execute(ctx, command any, args ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]any{command}, args...)
+	varargs := append([]any{ctx, command}, args...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockCommand)(nil).Execute), varargs...)
 }

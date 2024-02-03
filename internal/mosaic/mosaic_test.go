@@ -1,6 +1,7 @@
 package mosaic_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -321,9 +322,10 @@ func TestGenerateMosaic(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	ctx := context.TODO()
 	cmdExecutor := mocks.NewMockCommand(ctrl)
-	cmdExecutor.EXPECT().Execute("ffmpeg", "arg1", "arg2").Return(nil)
+	cmdExecutor.EXPECT().Execute(ctx, "ffmpeg", "arg1", "arg2").Return(nil)
 
-	err := mosaic.GenerateMosaic(cmdExecutor, "ffmpeg", "arg1", "arg2")
+	err := mosaic.GenerateMosaic(ctx, cmdExecutor, "ffmpeg", "arg1", "arg2")
 	assert.NoError(t, err)
 }

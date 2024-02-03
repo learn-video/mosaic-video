@@ -44,13 +44,23 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 	})
 }
 
-func handleStartMosaicTask(_ctx context.Context, t *asynq.Task, cfg *config.Config, logger *zap.SugaredLogger, locker locking.Locker, rp map[string]bool, stg storage.Storage) error {
+func handleStartMosaicTask(ctx context.Context, t *asynq.Task, cfg *config.Config, logger *zap.SugaredLogger, locker locking.Locker, rp map[string]bool, stg storage.Storage) error {
 	var p StartMosaicPayload
 	if err := json.Unmarshal(t.Payload(), &p); err != nil {
 		return err
 	}
 
-	logger.Info("Processing mosaic: ", p.Mosaic.Name)
+	c := make(chan error, 1)
+	go func() {
+		logger.Info("Processing mosaic: ", p.Mosaic.Name)
 
-	return GenerateMosaic(p.Mosaic, cfg, logger, locker, &mosaic.FFMPEGCommand{}, rp, stg)
+		c <- GenerateMosaic(ctx, p.Mosaic, cfg, logger, locker, &mosaic.FFMPEGCommand{}, rp, stg)
+	}()
+
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case res := <-c:
+		return res
+	}
 }
