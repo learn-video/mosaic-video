@@ -17,6 +17,11 @@ import (
 const (
 	LockingTimeTTL    time.Duration = 120 * time.Second
 	KeepAliveInterval time.Duration = LockingTimeTTL / 3
+	ReleaseTimeout    time.Duration = 5 * time.Second
+)
+
+var (
+	ErrLockFailed = fmt.Errorf("failed to obtain lock")
 )
 
 func GenerateMosaic(
@@ -29,6 +34,19 @@ func GenerateMosaic(
 	runningProcesses *sync.Map,
 	stg storage.Storage,
 ) error {
+	lock, err := locker.Obtain(ctx, m.Name, LockingTimeTTL)
+	if err != nil {
+		return ErrLockFailed
+	}
+
+	defer func() {
+		releaseCtx, cancel := context.WithTimeout(context.Background(), ReleaseTimeout)
+		defer cancel()
+		if releaseErr := lock.Release(releaseCtx); releaseErr != nil {
+			logger.Errorf("Failed to release lock for %s: %v", m.Name, releaseErr)
+		}
+	}()
+
 	if _, exists := runningProcesses.Load(m.Name); exists {
 		return nil
 	}
@@ -41,19 +59,10 @@ func GenerateMosaic(
 		return err
 	}
 
-	lock, err := locker.Obtain(ctx, m.Name, LockingTimeTTL)
-	if err != nil {
-		return err
-	}
-
 	go keepAlive(ctx, logger, lock)
 
 	select {
 	case <-ctx.Done():
-		if err := lock.Release(ctx); err != nil {
-			return err
-		}
-
 		return ctx.Err()
 	default:
 		args := command.Build(m, cfg)
