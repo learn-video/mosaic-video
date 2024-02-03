@@ -3,6 +3,7 @@ package worker
 import (
 	"context"
 	"encoding/json"
+	"sync"
 
 	"github.com/hibiken/asynq"
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -22,12 +23,12 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 				asynq.Config{Concurrency: cfg.MaxConcurrentTasks},
 			)
 
-			rp := make(map[string]bool)
+			runningProcesses := &sync.Map{}
 
 			mux := asynq.NewServeMux()
 
 			startMosaicHandler := func(ctx context.Context, t *asynq.Task) error {
-				return handleStartMosaicTask(ctx, t, cfg, logger, locker, rp, stg)
+				return handleStartMosaicTask(ctx, t, cfg, logger, locker, runningProcesses, stg)
 			}
 			mux.HandleFunc(TypeStartMosaic, startMosaicHandler)
 
@@ -44,7 +45,7 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 	})
 }
 
-func handleStartMosaicTask(ctx context.Context, t *asynq.Task, cfg *config.Config, logger *zap.SugaredLogger, locker locking.Locker, rp map[string]bool, stg storage.Storage) error {
+func handleStartMosaicTask(ctx context.Context, t *asynq.Task, cfg *config.Config, logger *zap.SugaredLogger, locker locking.Locker, rp *sync.Map, stg storage.Storage) error {
 	var p StartMosaicPayload
 	if err := json.Unmarshal(t.Payload(), &p); err != nil {
 		return err

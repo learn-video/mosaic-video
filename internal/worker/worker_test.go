@@ -3,6 +3,7 @@ package worker_test
 import (
 	"context"
 	"errors"
+	"sync"
 	"testing"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -32,7 +33,7 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(nil, errors.New("error obtaining lock"))
 	storage.EXPECT().CreateBucket(gomock.Any()).Return(nil)
 
-	runningProcesses := make(map[string]bool)
+	runningProcesses := &sync.Map{}
 
 	err := worker.GenerateMosaic(
 		context.TODO(),
@@ -84,7 +85,7 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	ctx := context.TODO()
 	cmdExecutor := mocks.NewMockCommand(ctrl)
 	cmdExecutor.EXPECT().Execute(ctx, "ffmpeg", gomock.Any()).Return(errors.New("error executing command"))
-	runningProcesses := make(map[string]bool)
+	runningProcesses := &sync.Map{}
 
 	err := worker.GenerateMosaic(
 		ctx,
@@ -129,7 +130,7 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 	}
 
 	storage.EXPECT().CreateBucket(gomock.Any()).Return(errors.New("no permissions to create directory"))
-	runningProcesses := make(map[string]bool)
+	runningProcesses := &sync.Map{}
 
 	err := worker.GenerateMosaic(
 		context.TODO(),
