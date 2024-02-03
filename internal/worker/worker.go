@@ -33,10 +33,12 @@ func GenerateMosaic(
 	stg storage.Storage,
 ) error {
 	runningMutex.Lock()
+
 	if _, exists := runningProcesses[m.Name]; exists {
 		runningMutex.Unlock()
 		return nil
 	}
+
 	runningProcesses[m.Name] = true
 	runningMutex.Unlock()
 
