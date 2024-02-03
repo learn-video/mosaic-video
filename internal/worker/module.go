@@ -3,6 +3,7 @@ package worker
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"sync"
 
 	"github.com/hibiken/asynq"
@@ -62,6 +63,10 @@ func handleStartMosaicTask(ctx context.Context, t *asynq.Task, cfg *config.Confi
 	case <-ctx.Done():
 		return ctx.Err()
 	case err := <-c:
+		if errors.Is(err, ErrLockFailed) {
+			logger.Debugf("Failed to obtain lock for mosaic '%s'", p.Mosaic.Name)
+			return nil
+		}
 		logger.Errorf("Error processing mosaic '%s': %w", p.Mosaic.Name, err)
 		return err
 	}
