@@ -18,10 +18,6 @@ const (
 	KeepAliveInterval time.Duration = LockingTimeTTL / 3
 )
 
-var (
-	runningMutex sync.Mutex
-)
-
 func GenerateMosaic(
 	ctx context.Context,
 	m mosaic.Mosaic,
@@ -29,24 +25,16 @@ func GenerateMosaic(
 	logger *zap.SugaredLogger,
 	locker locking.Locker,
 	cmdExecutor mosaic.Command,
-	runningProcesses map[string]bool,
+	runningProcesses *sync.Map,
 	stg storage.Storage,
 ) error {
-	runningMutex.Lock()
-
-	if _, exists := runningProcesses[m.Name]; exists {
-		runningMutex.Unlock()
+	if _, exists := runningProcesses.Load(m.Name); exists {
 		return nil
 	}
 
-	runningProcesses[m.Name] = true
-	runningMutex.Unlock()
+	runningProcesses.Store(m.Name, true)
 
-	defer func() {
-		runningMutex.Lock()
-		delete(runningProcesses, m.Name)
-		runningMutex.Unlock()
-	}()
+	defer runningProcesses.Delete(m.Name)
 
 	if err := createBucket(&m, cfg, stg); err != nil {
 		return err
