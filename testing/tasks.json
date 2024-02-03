@@ -1,6 +1,6 @@
 [
     {
-        "name": "mosaic",
+        "name": "varieties",
         "background_url": "https://i.ibb.co/ZVNYHJf/background.jpg",
         "medias": [
             {
@@ -27,6 +27,29 @@
                 },
                 "scale": "1745x300",
                 "is_loop": true
+            }
+        ],
+        "audio": "first_input"
+    },
+    {
+        "name": "business_and_sports",
+        "background_url": "https://i.ibb.co/ZVNYHJf/background.jpg",
+        "medias": [
+            {
+                "url": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/bitrate_3.m3u8",
+                "position": {
+                    "x": 84,
+                    "y": 40
+                },
+                "scale": "1170x660"
+            },
+            {
+                "url": "https://streaming013.gestec-video.com/hls/negociostv.m3u8",
+                "position": {
+                    "x": 1260,
+                    "y": 40
+                },
+                "scale": "568x660"
             }
         ],
         "audio": "first_input"
