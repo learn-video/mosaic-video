@@ -67,7 +67,9 @@ func handleStartMosaicTask(ctx context.Context, t *asynq.Task, cfg *config.Confi
 			logger.Debugf("Failed to obtain lock for mosaic '%s'", p.Mosaic.Name)
 			return nil
 		}
+
 		logger.Errorf("Error processing mosaic '%s': %w", p.Mosaic.Name, err)
+
 		return err
 	}
 }
