@@ -42,6 +42,7 @@ func GenerateMosaic(
 	defer func() {
 		releaseCtx, cancel := context.WithTimeout(context.Background(), ReleaseTimeout)
 		defer cancel()
+
 		if releaseErr := lock.Release(releaseCtx); releaseErr != nil {
 			logger.Errorf("Failed to release lock for %s: %v", m.Name, releaseErr)
 		}
