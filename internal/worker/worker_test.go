@@ -15,10 +15,50 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
+func TestGenerateMosaicSuccessfully(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	cfg := &config.Config{}
+	logger := logging.NewLogger()
+	locker := mocks.NewMockLocker(ctrl)
+	storage := mocks.NewMockStorage(ctrl)
+	cmdExecutor := mocks.NewMockCommand(ctrl)
+	mosaic := mosaic.Mosaic{
+		Name: "mosaicvideo",
+		Medias: []mosaic.Media{
+			{URL: "http://example.com/mosaicvideo_1.m3u8"},
+			{URL: "http://example.com/mosaicvideo_2.m3u8"},
+		},
+	}
+
+	lock := mocks.NewMockLock(ctrl)
+	lock.EXPECT().Release(gomock.Any()).AnyTimes().Return(nil)
+	locker.EXPECT().Obtain(gomock.Any(), mosaic.Name, gomock.Any()).Return(lock, nil)
+	storage.EXPECT().CreateBucket(gomock.Any()).Return(nil)
+	cmdExecutor.EXPECT().Execute(gomock.Any(), "ffmpeg", gomock.Any()).Return(nil)
+
+	runningProcesses := &sync.Map{}
+
+	err := worker.GenerateMosaic(
+		context.TODO(),
+		mosaic,
+		cfg,
+		logger,
+		locker,
+		cmdExecutor,
+		runningProcesses,
+		storage,
+	)
+
+	assert.NoError(t, err)
+}
+
 func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	cfg := &config.Config{}
 	logger := logging.NewLogger()
 	locker := mocks.NewMockLocker(ctrl)
 	storage := mocks.NewMockStorage(ctrl)
@@ -29,7 +69,6 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 			{URL: "http://example.com/mosaicvideo_2.m3u8"},
 		},
 	}
-	cfg := &config.Config{}
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(nil, errors.New("error obtaining lock"))
 
 	runningProcesses := &sync.Map{}
