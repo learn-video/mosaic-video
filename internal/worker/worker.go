@@ -71,6 +71,7 @@ func GenerateMosaic(
 			if lerr := lock.Release(ctx); lerr != nil {
 				return lerr
 			}
+			return err
 		}
 	}
 

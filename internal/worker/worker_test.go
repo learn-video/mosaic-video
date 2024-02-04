@@ -31,7 +31,6 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	}
 	cfg := &config.Config{}
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(nil, errors.New("error obtaining lock"))
-	storage.EXPECT().CreateBucket(gomock.Any()).Return(nil)
 
 	runningProcesses := &sync.Map{}
 
@@ -81,10 +80,12 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	lock.EXPECT().Release(gomock.Any()).Return(nil)
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(lock, nil)
 	storage.EXPECT().CreateBucket(gomock.Any()).Return(nil)
+	lock.EXPECT().Release(gomock.Any()).Return(nil)
 
 	ctx := context.TODO()
 	cmdExecutor := mocks.NewMockCommand(ctrl)
 	cmdExecutor.EXPECT().Execute(ctx, "ffmpeg", gomock.Any()).Return(errors.New("error executing command"))
+
 	runningProcesses := &sync.Map{}
 
 	err := worker.GenerateMosaic(
@@ -107,6 +108,7 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 
 	cfg := &config.Config{}
 	logger := logging.NewLogger()
+	locker := mocks.NewMockLocker(ctrl)
 	storage := mocks.NewMockStorage(ctrl)
 	mosaic := mosaic.Mosaic{
 		Name: "mosaicvideo",
@@ -129,7 +131,11 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 		},
 	}
 
+	lock := mocks.NewMockLock(ctrl)
+	lock.EXPECT().Release(gomock.Any()).Return(nil)
+	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(lock, nil)
 	storage.EXPECT().CreateBucket(gomock.Any()).Return(errors.New("no permissions to create directory"))
+
 	runningProcesses := &sync.Map{}
 
 	err := worker.GenerateMosaic(
@@ -137,7 +143,7 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 		mosaic,
 		cfg,
 		logger,
-		nil,
+		locker,
 		nil,
 		runningProcesses,
 		storage,
