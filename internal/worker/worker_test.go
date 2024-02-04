@@ -3,7 +3,6 @@ package worker_test
 import (
 	"context"
 	"errors"
-	"sync"
 	"testing"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -38,8 +37,6 @@ func TestGenerateMosaicSuccessfully(t *testing.T) {
 	storage.EXPECT().CreateBucket(gomock.Any()).Return(nil)
 	cmdExecutor.EXPECT().Execute(gomock.Any(), "ffmpeg", gomock.Any()).Return(nil)
 
-	runningProcesses := &sync.Map{}
-
 	err := worker.GenerateMosaic(
 		context.TODO(),
 		mosaic,
@@ -47,7 +44,6 @@ func TestGenerateMosaicSuccessfully(t *testing.T) {
 		logger,
 		locker,
 		cmdExecutor,
-		runningProcesses,
 		storage,
 	)
 
@@ -71,8 +67,6 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 	}
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(nil, errors.New("error obtaining lock"))
 
-	runningProcesses := &sync.Map{}
-
 	err := worker.GenerateMosaic(
 		context.TODO(),
 		mosaic,
@@ -80,7 +74,6 @@ func TestGenerateMosaicWhenLockingFails(t *testing.T) {
 		logger,
 		locker,
 		nil,
-		runningProcesses,
 		storage,
 	)
 
@@ -115,6 +108,7 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 			},
 		},
 	}
+
 	lock := mocks.NewMockLock(ctrl)
 	lock.EXPECT().Release(gomock.Any()).Return(nil)
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(lock, nil)
@@ -125,8 +119,6 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 	cmdExecutor := mocks.NewMockCommand(ctrl)
 	cmdExecutor.EXPECT().Execute(ctx, "ffmpeg", gomock.Any()).Return(errors.New("error executing command"))
 
-	runningProcesses := &sync.Map{}
-
 	err := worker.GenerateMosaic(
 		ctx,
 		mosaic,
@@ -134,7 +126,6 @@ func TestGenerateMosaicWhenExecutingCommandFails(t *testing.T) {
 		logger,
 		locker,
 		cmdExecutor,
-		runningProcesses,
 		storage,
 	)
 
@@ -175,8 +166,6 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 	locker.EXPECT().Obtain(gomock.Any(), "mosaicvideo", gomock.Any()).Return(lock, nil)
 	storage.EXPECT().CreateBucket(gomock.Any()).Return(errors.New("no permissions to create directory"))
 
-	runningProcesses := &sync.Map{}
-
 	err := worker.GenerateMosaic(
 		context.TODO(),
 		mosaic,
@@ -184,7 +173,6 @@ func TestGenerateMosaicWhenCreateBucketFails(t *testing.T) {
 		logger,
 		locker,
 		nil,
-		runningProcesses,
 		storage,
 	)
 
