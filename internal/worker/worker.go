@@ -3,7 +3,6 @@ package worker
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -31,7 +30,6 @@ func GenerateMosaic(
 	logger *zap.SugaredLogger,
 	locker locking.Locker,
 	cmdExecutor mosaic.Command,
-	runningProcesses *sync.Map,
 	stg storage.Storage,
 ) error {
 	lock, err := locker.Obtain(ctx, m.Name, LockingTimeTTL)
@@ -47,14 +45,6 @@ func GenerateMosaic(
 			logger.Errorf("Failed to release lock for %s: %v", m.Name, releaseErr)
 		}
 	}()
-
-	if _, exists := runningProcesses.Load(m.Name); exists {
-		return nil
-	}
-
-	runningProcesses.Store(m.Name, true)
-
-	defer runningProcesses.Delete(m.Name)
 
 	if err := createBucket(&m, cfg, stg); err != nil {
 		return err

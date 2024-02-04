@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"sync"
 
 	"github.com/hibiken/asynq"
 	"github.com/mauricioabreu/mosaic-video/internal/config"
@@ -16,11 +15,10 @@ import (
 )
 
 type MosaicTaskParams struct {
-	cfg              *config.Config
-	logger           *zap.SugaredLogger
-	locker           locking.Locker
-	runningProcesses *sync.Map
-	stg              storage.Storage
+	cfg    *config.Config
+	logger *zap.SugaredLogger
+	locker locking.Locker
+	stg    storage.Storage
 }
 
 func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker *locking.RedisLocker, stg storage.Storage) {
@@ -32,17 +30,14 @@ func Run(lc fx.Lifecycle, cfg *config.Config, logger *zap.SugaredLogger, locker 
 				asynq.Config{Concurrency: cfg.MaxConcurrentTasks},
 			)
 
-			runningProcesses := &sync.Map{}
-
 			mux := asynq.NewServeMux()
 
 			startMosaicHandler := func(ctx context.Context, t *asynq.Task) error {
 				return handleStartMosaicTask(ctx, t, MosaicTaskParams{
-					cfg:              cfg,
-					logger:           logger,
-					locker:           locker,
-					runningProcesses: runningProcesses,
-					stg:              stg,
+					cfg:    cfg,
+					logger: logger,
+					locker: locker,
+					stg:    stg,
 				})
 			}
 			mux.HandleFunc(TypeStartMosaic, startMosaicHandler)
@@ -76,7 +71,6 @@ func handleStartMosaicTask(ctx context.Context, t *asynq.Task, mp MosaicTaskPara
 			mp.logger,
 			mp.locker,
 			&mosaic.FFMPEGCommand{},
-			mp.runningProcesses,
 			mp.stg,
 		)
 	}()
