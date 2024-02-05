@@ -67,9 +67,11 @@ Each worker, when running, fetches mosaic settings from an API. A mock API is av
 
 `just worker` starts the go process to generate mosaics.
 
-`just storage` startes the uploader component.
+`just storage` starts the uploader component.
 
 `just player` starts the HLS player.
+
+`just simulate` enqueues tasks from [tasks.json](testing/tasks.json) to the server.
 
 ## Installation
 
