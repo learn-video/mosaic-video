@@ -38,10 +38,6 @@ The project has two main components:
 * VoD in looping.
     * To use like a promo video, see this [example](https://streamable.com/093xvt).
 
-## Roadmap
-
-* Support for running distributed workers.
-
 ## Running
 
 To run the project, certain environment variables need to be set. These variables can be found in the [.env](.env) file.
