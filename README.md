@@ -42,7 +42,9 @@ The project has two main components:
 
 To run the project, certain environment variables need to be set. These variables can be found in the [.env](.env) file.
 
-Each worker, when running, fetches mosaic settings from an API. A mock API is available, detailed in [tasks.json](testing/tasks.json). Below is a breakdown of each field in the JSON:
+Each worker, when running, uses a well-structured content. An example is detailed in [tasks.json](testing/tasks.json). You will use this file to [simulate](cmd/simulate.go) the worker, enqueuing the tasks following the very same format described there.
+
+Below is a breakdown of each field in the JSON:
 
 * **name**: A string identifier for the mosaic configuration. In this case, it's set to "mosaic".
 * **background_url**: The URL of the background image to be used in the mosaic. It is a link to an image file.
