@@ -39,6 +39,15 @@ func getVideoInputArguments(m mosaic.Mosaic) []string {
 	args := []string{"-i", m.BackgroundURL}
 
 	for _, media := range m.Medias {
+		// Resiliency flags
+		args = append(args,
+			"-reconnect_at_eof", "1",
+			"-reconnect_streamed", "1",
+			"-reconnect_on_network_error", "1",
+			"-reconnect_on_http_error", "4xx,5xx",
+			"-reconnect_delay_max", "2",
+		)
+
 		if media.IsLoop {
 			args = append(args,
 				"-stream_loop", "-1",
