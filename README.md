@@ -18,7 +18,7 @@ The project has two main components:
     * HTTP server that receives the mosaic through HTTP and stores it on S3;
     * Or a local storage backend (local filesystem).
 
-![Mosaic Video design](docs/static/mosaic_design.png)
+![Mosaic Video design](docs/static/mosaic_arch.jpg)
 
 ## Features
 
